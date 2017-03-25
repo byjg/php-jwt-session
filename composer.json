@@ -1,0 +1,22 @@
+{
+    "name": "byjg/jwt-session",
+    "description": "Use JWT Token as a PHP Session",
+    "authors": [
+        {
+            "name": "João Gilberto Magalhães",
+            "email": "joao@byjg.com.br"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "ByJG\\Session\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=5.6.0",
+        "byjg/jwt-wrapper": "1.0.*"
+    },
+    "license": "MIT"
+}
