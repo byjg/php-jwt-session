@@ -79,7 +79,7 @@ class JwtSession implements SessionHandlerInterface
      */
     public function destroy($session_id)
     {
-        if (headers_sent()) {
+        if (!headers_sent()) {
             setcookie(self::COOKIE_PREFIX . $this->suffix, null);
         }
 
