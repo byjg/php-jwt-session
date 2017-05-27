@@ -1,6 +1,6 @@
 {
     "name": "byjg/jwt-session",
-    "description": "Use JWT Token as a PHP Session",
+    "description": "JwtSession is a PHP session replacement. Instead of use FileSystem, just use JWT TOKEN. The implementation following the SessionHandlerInterface.",
     "authors": [
         {
             "name": "João Gilberto Magalhães",

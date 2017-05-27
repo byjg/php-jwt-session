@@ -79,7 +79,10 @@ class JwtSession implements SessionHandlerInterface
      */
     public function destroy($session_id)
     {
-        setcookie(self::COOKIE_PREFIX . $this->suffix, null);
+        if (!headers_sent()) {
+            setcookie(self::COOKIE_PREFIX . $this->suffix, null);
+        }
+
         return true;
     }
 
@@ -170,7 +173,9 @@ class JwtSession implements SessionHandlerInterface
         $data = $jwt->createJwtData($this->unSerializeSessionData($session_data), $this->timeOutMinutes * 60);
         $token = $jwt->generateToken($data);
 
-        setcookie(self::COOKIE_PREFIX . $this->suffix, $token);
+        if (!headers_sent()) {
+            setcookie(self::COOKIE_PREFIX . $this->suffix, $token);
+        }
 
         return true;
     }
