@@ -65,3 +65,8 @@ session_set_save_handler($handler, true);
 $handler = new \ByJG\Session\JwtSession('your.domain.com', 'your super secret key');
 $handler->replaceSessionHandler(true);
 ```
+
+### How it works
+
+We store a cookie named AUTH_BEARER_<context name> with the session name. The PHPSESSID cookie is still created because
+PHP create it by default but we do not use it;
