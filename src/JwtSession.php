@@ -31,12 +31,12 @@ class JwtSession implements SessionHandlerInterface
      * @param $secretKey
      * @param int $timeOutMinutes
      */
-    public function __construct($serverName, $secretKey, $timeOutMinutes = 20, $sessionContext = 'default', $cookieDomain = null)
+    public function __construct($serverName, $secretKey, $timeOutMinutes = null, $sessionContext = null, $cookieDomain = null)
     {
         $this->serverName = $serverName;
         $this->secretKey = $secretKey;
-        $this->timeOutMinutes = $timeOutMinutes;
-        $this->suffix = $sessionContext;
+        $this->timeOutMinutes = $timeOutMinutes ?: 20;
+        $this->suffix = $sessionContext ?: 'default';
         $this->cookieDomain = $cookieDomain;
     }
 
