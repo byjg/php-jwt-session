@@ -22,6 +22,8 @@ class JwtSession implements SessionHandlerInterface
 
     protected $suffix = "default";
 
+    protected $cookieDomain;
+
     /**
      * JwtSession constructor.
      *
@@ -29,12 +31,13 @@ class JwtSession implements SessionHandlerInterface
      * @param $secretKey
      * @param int $timeOutMinutes
      */
-    public function __construct($serverName, $secretKey, $timeOutMinutes = 20, $sessionContext = 'default')
+    public function __construct($serverName, $secretKey, $timeOutMinutes = 20, $sessionContext = 'default', $cookieDomain = null)
     {
         $this->serverName = $serverName;
         $this->secretKey = $secretKey;
         $this->timeOutMinutes = $timeOutMinutes;
         $this->suffix = $sessionContext;
+        $this->cookieDomain = $cookieDomain;
     }
 
     public function replaceSessionHandler($startSession = true)
@@ -174,7 +177,7 @@ class JwtSession implements SessionHandlerInterface
         $token = $jwt->generateToken($data);
 
         if (!headers_sent()) {
-            setcookie(self::COOKIE_PREFIX . $this->suffix, $token);
+            setcookie(self::COOKIE_PREFIX . $this->suffix, $token, null, null, $this->cookieDomain);
         }
 
         return true;

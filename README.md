@@ -68,6 +68,14 @@ $handler = new \ByJG\Session\JwtSession('your.domain.com', 'your super secret ke
 $handler->replaceSessionHandler(true);
 ```
 
+### Create the handler and replace the session handler, specifying cookie domain valid for all subdomains of mydomain.com
+
+```php
+<?php
+$handler = new \ByJG\Session\JwtSession('your.domain.com', 'your super secret key', null, null, '.mydomain.com');
+$handler->replaceSessionHandler(true);
+```
+
 ### How it works
 
 We store a cookie named AUTH_BEARER_<context name> with the session name. The PHPSESSID cookie is still created because
