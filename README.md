@@ -29,6 +29,9 @@ To avoid this you have to create REDIS/MEMCACHED clusters.
 But if you save the session into JWT Token you do not need to create a new server.
 Just to use. 
 
+You can read more in this Codementor's article: 
+[Using JSON Web Token (JWT) as a PHP Session](https://www.codementor.io/byjg/using-json-web-token-jwt-as-a-php-session-axeuqbg1m)
+
 ## Security Information
 
 The JWT Token cannot be changed, but it can be read. 
