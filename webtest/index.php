@@ -7,9 +7,8 @@ if (!isset($_REQUEST['turnoff'])) {   // Just for turnoff the session
     $handler->replaceSessionHandler(true);
 } else {
     echo "<H1>JWT Session is disabled</H1>";
+    session_start();
 }
-
-session_start();
 
 ?>
 
