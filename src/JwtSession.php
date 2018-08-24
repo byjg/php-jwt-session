@@ -139,7 +139,7 @@ class JwtSession implements SessionHandlerInterface
                 $jwt = new JwtWrapper($this->serverName, $this->secretKey);
                 $data = $jwt->extractData($_COOKIE[self::COOKIE_PREFIX . $this->suffix]);
 
-                return $this->serializeSessionData($data->data);
+                return $data->data;
             }
             return '';
         } catch (\Exception $ex) {
@@ -168,7 +168,7 @@ class JwtSession implements SessionHandlerInterface
     public function write($session_id, $session_data)
     {
         $jwt = new JwtWrapper($this->serverName, $this->secretKey);
-        $data = $jwt->createJwtData($this->unSerializeSessionData($session_data), $this->timeOutMinutes * 60);
+        $data = $jwt->createJwtData($session_data, $this->timeOutMinutes * 60);
         $token = $jwt->generateToken($data);
 
         if (!headers_sent()) {
