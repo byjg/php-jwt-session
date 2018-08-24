@@ -173,6 +173,9 @@ class JwtSession implements SessionHandlerInterface
 
         if (!headers_sent()) {
             setcookie(self::COOKIE_PREFIX . $this->suffix, $token, null, '/', $this->cookieDomain);
+            if (defined("SETCOOKIE_FORTEST")) {
+                $_COOKIE[self::COOKIE_PREFIX . $this->suffix] = $token;
+            }
         }
 
         return true;
