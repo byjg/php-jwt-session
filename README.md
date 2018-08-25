@@ -1,5 +1,6 @@
 # JwtSession
 
+[![Build Status](https://travis-ci.org/byjg/jwt-session.svg?branch=master)](https://travis-ci.org/byjg/jwt-session)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/byjg/jwt-session/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/byjg/jwt-session/?branch=master)
 
 JwtSession is a PHP session replacement. Instead of use FileSystem, just use JWT TOKEN. 

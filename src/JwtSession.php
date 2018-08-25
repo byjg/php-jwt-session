@@ -38,7 +38,7 @@ class JwtSession implements SessionHandlerInterface
     public function replaceSessionHandler($startSession = true)
     {
         if (session_status() != PHP_SESSION_NONE) {
-            throw new \Exception('Session already started!');
+            throw new JwtSessionException('Session already started!');
         }
 
         session_set_save_handler($this, true);
@@ -139,7 +139,7 @@ class JwtSession implements SessionHandlerInterface
                 $jwt = new JwtWrapper($this->serverName, $this->secretKey);
                 $data = $jwt->extractData($_COOKIE[self::COOKIE_PREFIX . $this->suffix]);
 
-                return $this->serializeSessionData($data->data);
+                return $data->data;
             }
             return '';
         } catch (\Exception $ex) {
@@ -168,11 +168,14 @@ class JwtSession implements SessionHandlerInterface
     public function write($session_id, $session_data)
     {
         $jwt = new JwtWrapper($this->serverName, $this->secretKey);
-        $data = $jwt->createJwtData($this->unSerializeSessionData($session_data), $this->timeOutMinutes * 60);
+        $data = $jwt->createJwtData($session_data, $this->timeOutMinutes * 60);
         $token = $jwt->generateToken($data);
 
         if (!headers_sent()) {
             setcookie(self::COOKIE_PREFIX . $this->suffix, $token, null, '/', $this->cookieDomain);
+            if (defined("SETCOOKIE_FORTEST")) {
+                $_COOKIE[self::COOKIE_PREFIX . $this->suffix] = $token;
+            }
         }
 
         return true;
@@ -194,7 +197,7 @@ class JwtSession implements SessionHandlerInterface
         $offset = 0;
         while ($offset < strlen($session_data)) {
             if (!strstr(substr($session_data, $offset), "|")) {
-                throw new \Exception("invalid data, remaining: " . substr($session_data, $offset));
+                throw new JwtSessionException("invalid data, remaining: " . substr($session_data, $offset));
             }
             $pos = strpos($session_data, "|", $offset);
             $num = $pos - $offset;
