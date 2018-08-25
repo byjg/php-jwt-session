@@ -38,7 +38,7 @@ class JwtSession implements SessionHandlerInterface
     public function replaceSessionHandler($startSession = true)
     {
         if (session_status() != PHP_SESSION_NONE) {
-            throw new \Exception('Session already started!');
+            throw new JwtSessionException('Session already started!');
         }
 
         session_set_save_handler($this, true);
@@ -197,7 +197,7 @@ class JwtSession implements SessionHandlerInterface
         $offset = 0;
         while ($offset < strlen($session_data)) {
             if (!strstr(substr($session_data, $offset), "|")) {
-                throw new \Exception("invalid data, remaining: " . substr($session_data, $offset));
+                throw new JwtSessionException("invalid data, remaining: " . substr($session_data, $offset));
             }
             $pos = strpos($session_data, "|", $offset);
             $num = $pos - $offset;
