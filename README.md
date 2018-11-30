@@ -1,12 +1,13 @@
 # JwtSession
 
+[![Opensource ByJG](https://img.shields.io/badge/opensource-byjg.com-brightgreen.svg)](http://opensource.byjg.com)
 [![Build Status](https://travis-ci.org/byjg/jwt-session.svg?branch=master)](https://travis-ci.org/byjg/jwt-session)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/byjg/jwt-session/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/byjg/jwt-session/?branch=master)
 
 JwtSession is a PHP session replacement. Instead of use FileSystem, just use JWT TOKEN. 
 The implementation following the SessionHandlerInterface.
 
-## How to use:
+# How to use:
 
 Before the session_start() use the command: 
 
@@ -18,7 +19,7 @@ session_set_save_handler($handler, true);
 
 Now, all your `$_SESSION` variable will be saved directly to a JWT Token!!
  
-## Motivation
+# Motivation
 
 The default PHP Session does not work in different servers using round robin or other algorithms.
 This occurs because PHP Session are saved by default in the file system. 
@@ -39,15 +40,15 @@ The JWT Token cannot be changed, but it can be read.
 This implementation save the JWT into a client cookie.  
 Because of this _**do not** store in the JWT Token sensible data like passwords_.
  
-## Install
+# Install
 
 ```
 composer require "byjg/jwt-session=1.0.*"
 ```
 
-## Customizations
+# Customizations
  
-### Setting the validity of JWT Token
+## Setting the validity of JWT Token
 
 ```php
 <?php
@@ -56,7 +57,7 @@ $handler = new \ByJG\Session\JwtSession('your.domain.com', 'your super secret ke
 session_set_save_handler($handler, true);
 ```
 
-### Setting the different Session Contexts
+## Setting the different Session Contexts
 
 ```php
 <?php
@@ -64,7 +65,7 @@ $handler = new \ByJG\Session\JwtSession('your.domain.com', 'your super secret ke
 session_set_save_handler($handler, true);
 ```
 
-### Create the handler and replace the session handler
+## Create the handler and replace the session handler
 
 ```php
 <?php
@@ -72,7 +73,7 @@ $handler = new \ByJG\Session\JwtSession('your.domain.com', 'your super secret ke
 $handler->replaceSessionHandler(true);
 ```
 
-### Create the handler and replace the session handler, specifying cookie domain valid for all subdomains of mydomain.com
+## Create the handler and replace the session handler, specifying cookie domain valid for all subdomains of mydomain.com
 
 ```php
 <?php
@@ -80,7 +81,9 @@ $handler = new \ByJG\Session\JwtSession('your.domain.com', 'your super secret ke
 $handler->replaceSessionHandler(true);
 ```
 
-### How it works
+## How it works
 
 We store a cookie named AUTH_BEARER_<context name> with the session name. The PHPSESSID cookie is still created because
 PHP create it by default but we do not use it;
+
+

@@ -19,6 +19,8 @@ class JwtSession implements SessionHandlerInterface
 
     protected $cookieDomain;
 
+    protected $path = "/";
+
     /**
      * JwtSession constructor.
      *
@@ -26,15 +28,20 @@ class JwtSession implements SessionHandlerInterface
      * @param $secretKey
      * @param int $timeOutMinutes
      */
-    public function __construct($serverName, $secretKey, $timeOutMinutes = null, $sessionContext = null, $cookieDomain = null)
+    public function __construct($serverName, $secretKey, $timeOutMinutes = null, $sessionContext = null, $cookieDomain = null, $path = "/")
     {
         $this->serverName = $serverName;
         $this->secretKey = $secretKey;
         $this->timeOutMinutes = $timeOutMinutes ?: 20;
         $this->suffix = $sessionContext ?: 'default';
         $this->cookieDomain = $cookieDomain;
+        $this->path = "/";
     }
 
+    /**
+     * @param bool $startSession
+     * @throws JwtSessionException
+     */
     public function replaceSessionHandler($startSession = true)
     {
         if (session_status() != PHP_SESSION_NONE) {
@@ -78,7 +85,13 @@ class JwtSession implements SessionHandlerInterface
     public function destroy($session_id)
     {
         if (!headers_sent()) {
-            setcookie(self::COOKIE_PREFIX . $this->suffix, null);
+            setcookie(
+                self::COOKIE_PREFIX . $this->suffix,
+                null,
+                (time()-3000),
+                $this->path,
+                $this->cookieDomain
+            );
         }
 
         return true;
@@ -172,7 +185,15 @@ class JwtSession implements SessionHandlerInterface
         $token = $jwt->generateToken($data);
 
         if (!headers_sent()) {
-            setcookie(self::COOKIE_PREFIX . $this->suffix, $token, null, '/', $this->cookieDomain);
+            setcookie(
+                self::COOKIE_PREFIX . $this->suffix,
+                $token,
+                (time()+$this->timeOutMinutes*60) ,
+                $this->path,
+                $this->cookieDomain,
+                false,
+                true
+            );
             if (defined("SETCOOKIE_FORTEST")) {
                 $_COOKIE[self::COOKIE_PREFIX . $this->suffix] = $token;
             }
