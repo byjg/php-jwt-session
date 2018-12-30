@@ -9,33 +9,19 @@ class JwtSession implements SessionHandlerInterface
 {
     const COOKIE_PREFIX = "AUTH_BEARER_";
 
-    protected $serverName;
-
-    protected $secretKey;
-
-    protected $timeOutMinutes;
-
-    protected $suffix = "default";
-
-    protected $cookieDomain;
-
-    protected $path = "/";
+    /**
+     * @var SessionConfig
+     */
+    protected $sessionConfig;
 
     /**
      * JwtSession constructor.
      *
-     * @param $serverName
-     * @param $secretKey
-     * @param int $timeOutMinutes
+     * @param $sessionConfig
      */
-    public function __construct($serverName, $secretKey, $timeOutMinutes = null, $sessionContext = null, $cookieDomain = null, $path = "/")
+    public function __construct($sessionConfig)
     {
-        $this->serverName = $serverName;
-        $this->secretKey = $secretKey;
-        $this->timeOutMinutes = $timeOutMinutes ?: 20;
-        $this->suffix = $sessionContext ?: 'default';
-        $this->cookieDomain = $cookieDomain;
-        $this->path = "/";
+        $this->sessionConfig = $sessionConfig;
     }
 
     /**
@@ -86,11 +72,11 @@ class JwtSession implements SessionHandlerInterface
     {
         if (!headers_sent()) {
             setcookie(
-                self::COOKIE_PREFIX . $this->suffix,
+                self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext(),
                 null,
                 (time()-3000),
-                $this->path,
-                $this->cookieDomain
+                $this->sessionConfig->getCookiePath(),
+                $this->sessionConfig->getCookieDomain()
             );
         }
 
@@ -148,9 +134,13 @@ class JwtSession implements SessionHandlerInterface
     public function read($session_id)
     {
         try {
-            if (isset($_COOKIE[self::COOKIE_PREFIX . $this->suffix])) {
-                $jwt = new JwtWrapper($this->serverName, $this->secretKey);
-                $data = $jwt->extractData($_COOKIE[self::COOKIE_PREFIX . $this->suffix]);
+            if (isset($_COOKIE[self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext()])) {
+                $jwt = new JwtWrapper(
+                    $this->sessionConfig->getServerName(),
+                    $this->sessionConfig->getSecretKey(),
+                    $this->sessionConfig->getPublicKey()
+                );
+                $data = $jwt->extractData($_COOKIE[self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext()]);
 
                 return $data->data;
             }
@@ -180,22 +170,26 @@ class JwtSession implements SessionHandlerInterface
      */
     public function write($session_id, $session_data)
     {
-        $jwt = new JwtWrapper($this->serverName, $this->secretKey);
-        $data = $jwt->createJwtData($session_data, $this->timeOutMinutes * 60);
+        $jwt = new JwtWrapper(
+            $this->sessionConfig->getServerName(),
+            $this->sessionConfig->getSecretKey(),
+            $this->sessionConfig->getPublicKey()
+        );
+        $data = $jwt->createJwtData($session_data, $this->sessionConfig->getTimeoutMinutes() * 60);
         $token = $jwt->generateToken($data);
 
         if (!headers_sent()) {
             setcookie(
-                self::COOKIE_PREFIX . $this->suffix,
+                self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext(),
                 $token,
-                (time()+$this->timeOutMinutes*60) ,
-                $this->path,
-                $this->cookieDomain,
+                (time()+$this->sessionConfig->getTimeoutMinutes()*60) ,
+                $this->sessionConfig->getCookiePath(),
+                $this->sessionConfig->getCookieDomain(),
                 false,
                 true
             );
             if (defined("SETCOOKIE_FORTEST")) {
-                $_COOKIE[self::COOKIE_PREFIX . $this->suffix] = $token;
+                $_COOKIE[self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext()] = $token;
             }
         }
 
@@ -212,6 +206,11 @@ class JwtSession implements SessionHandlerInterface
         return $result;
     }
 
+    /**
+     * @param $session_data
+     * @return array
+     * @throws JwtSessionException
+     */
     public function unSerializeSessionData($session_data)
     {
         $return_data = array();

@@ -12,11 +12,19 @@ class JwtSessionTest extends \PHPUnit\Framework\TestCase
      */
     protected $object;
 
+    /**
+     * @var \ByJG\Session\SessionConfig
+     */
+    protected $sessionConfig;
+
     const SESSION_ID = "sessionid";
 
     protected function setUp()
     {
-        $this->object = new JwtSession("example.com", "secretKey");
+        $this->sessionConfig = (new \ByJG\Session\SessionConfig('example.com'))
+            ->withSecret('secretKey');
+
+        $this->object = new JwtSession($this->sessionConfig);
     }
 
     protected function tearDown()
