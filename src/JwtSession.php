@@ -22,6 +22,8 @@ class JwtSession implements SessionHandlerInterface
      */
     public function __construct($sessionConfig)
     {
+        ini_set("session.use_cookies", 0);
+
         if (!($sessionConfig instanceof SessionConfig)) {
             throw new JwtSessionException('Required SessionConfig instance');
         }
@@ -37,8 +39,6 @@ class JwtSession implements SessionHandlerInterface
         if (session_status() != PHP_SESSION_NONE) {
             throw new JwtSessionException('Session already started!');
         }
-
-        ini_set("session.use_cookies", 0);
 
         session_set_save_handler($this, true);
 
