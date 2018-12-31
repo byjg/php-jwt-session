@@ -67,6 +67,7 @@ session_set_save_handler($handler, true);
 ```php
 <?php
 $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
+    ->withSecret('your super secret key')
     ->withSessionContext('MYCONTEXT');
 
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
@@ -89,6 +90,7 @@ $handler->replaceSessionHandler(true);
 ```php
 <?php
 $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
+    ->withSecret('your super secret key')
     ->withCookie('.mydomain.com', '/');
 
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
