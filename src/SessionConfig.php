@@ -32,6 +32,11 @@ class SessionConfig
         return $this;
     }
 
+    public function withTimeoutHours($timeout) {
+        $this->timeoutMinutes = $timeout * 60;
+        return $this;
+    }
+
     public function withCookie($domain, $path = "/") {
         $this->cookieDomain = $domain;
         $this->cookiePath = $path;
