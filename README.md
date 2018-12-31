@@ -56,7 +56,7 @@ composer require "byjg/jwt-session=2.0.*"
 <?php
 $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
     ->withSecret('your super secret key')
-    ->withTimeoutMinutes(50);
+    ->withTimeoutMinutes(60);   // You can use withTimeoutHours(1)
 
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
 session_set_save_handler($handler, true);
