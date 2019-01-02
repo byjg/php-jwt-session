@@ -3,9 +3,9 @@
 require_once __DIR__ . "/../vendor/autoload.php";
 
 $sessionConfig = (new \ByJG\Session\SessionConfig('api.com.br'))
-    ->withSecret('1234567890');
+    ->withSecret('1234567890')
+    ->replaceSessionHandler();
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
-$handler->replaceSessionHandler(true);
 
 $count = intval($_SESSION['count']) + 1;
 

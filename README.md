@@ -79,10 +79,10 @@ session_set_save_handler($handler, true);
 ```php
 <?php
 $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
-    ->withSecret('your super secret key');
+    ->withSecret('your super secret key')
+    ->replaceSessionHandler();
 
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
-$handler->replaceSessionHandler(true);
 ```
 
 # Specify cookie domain 
@@ -91,10 +91,10 @@ $handler->replaceSessionHandler(true);
 <?php
 $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
     ->withSecret('your super secret key')
-    ->withCookie('.mydomain.com', '/');
+    ->withCookie('.mydomain.com', '/')
+    ->replaceSessionHandler();
 
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
-$handler->replaceSessionHandler(true);
 ```
 
 # Uses RSA Private/Public Keys
@@ -143,10 +143,11 @@ owIDAQAB
 -----END PUBLIC KEY-----
 PUBLIC;
 
-$this->sessionConfig = (new \ByJG\Session\SessionConfig('example.com'))
-    ->withRsaSecret($secret, $public);
+$sessionConfig = (new \ByJG\Session\SessionConfig('example.com'))
+    ->withRsaSecret($secret, $public)
+    ->replaceSessionHandler();
 
-$handler->replaceSessionHandler(true);
+$handler = new \ByJG\Session\JwtSession($sessionConfig);
 ```
 
 If you want to know more details about how to create RSA Public/Private Keys access:

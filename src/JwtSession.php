@@ -27,14 +27,19 @@ class JwtSession implements SessionHandlerInterface
         if (!($sessionConfig instanceof SessionConfig)) {
             throw new JwtSessionException('Required SessionConfig instance');
         }
+
         $this->sessionConfig = $sessionConfig;
+
+        if ($this->sessionConfig->isReplaceSession()) {
+            $this->replaceSessionHandler();
+        }
     }
 
     /**
      * @param bool $startSession
      * @throws JwtSessionException
      */
-    public function replaceSessionHandler($startSession = true)
+    protected function replaceSessionHandler()
     {
         if (session_status() != PHP_SESSION_NONE) {
             throw new JwtSessionException('Session already started!');
@@ -42,7 +47,7 @@ class JwtSession implements SessionHandlerInterface
 
         session_set_save_handler($this, true);
 
-        if ($startSession) {
+        if ($this->sessionConfig->isStartSession()) {
             ob_start();
             session_start();
         }

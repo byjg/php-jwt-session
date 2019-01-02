@@ -4,9 +4,9 @@ require_once __DIR__ . "/../vendor/autoload.php";
 
 if (!isset($_REQUEST['turnoff'])) {   // Just for turnoff the session
     $sessionConfig = (new \ByJG\Session\SessionConfig('api.com.br'))
-        ->withSecret('1234567890');
+        ->withSecret('1234567890')
+        ->replaceSessionHandler();
     $handler = new \ByJG\Session\JwtSession($sessionConfig);
-    $handler->replaceSessionHandler(true);
 } else {
     echo "<H1>JWT Session is disabled</H1>";
     session_start();

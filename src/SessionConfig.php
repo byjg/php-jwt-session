@@ -12,6 +12,7 @@ class SessionConfig
     protected $cookiePath = '/';
     protected $secretKey = null;
     protected $publicKey = null;
+    protected $replaceSessionHandler = null;
 
     /**
      * SessionConfig constructor.
@@ -52,6 +53,11 @@ class SessionConfig
     public function withRsaSecret($private, $public) {
         $this->secretKey = $private;
         $this->publicKey = $public;
+        return $this;
+    }
+
+    public function replaceSessionHandler($startSession = true) {
+        $this->replaceSessionHandler = $startSession;
         return $this;
     }
 
@@ -109,5 +115,13 @@ class SessionConfig
     public function getPublicKey()
     {
         return $this->publicKey;
+    }
+
+    public function isReplaceSession() {
+        return $this->replaceSessionHandler !== null;
+    }
+
+    public function isStartSession() {
+        return $this->replaceSessionHandler === true;
     }
 }
