@@ -148,8 +148,7 @@ class JwtSession implements SessionHandlerInterface
             if (isset($_COOKIE[self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext()])) {
                 $jwt = new JwtWrapper(
                     $this->sessionConfig->getServerName(),
-                    $this->sessionConfig->getSecretKey(),
-                    $this->sessionConfig->getPublicKey()
+                    $this->sessionConfig->getKey()
                 );
                 $data = $jwt->extractData($_COOKIE[self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext()]);
 
@@ -181,14 +180,14 @@ class JwtSession implements SessionHandlerInterface
      * The return value (usually TRUE on success, FALSE on failure).
      * Note this value is returned internally to PHP for processing.
      * </p>
+     * @throws \ByJG\Util\JwtWrapperException
      * @since 5.4.0
      */
     public function write($session_id, $session_data)
     {
         $jwt = new JwtWrapper(
             $this->sessionConfig->getServerName(),
-            $this->sessionConfig->getSecretKey(),
-            $this->sessionConfig->getPublicKey()
+            $this->sessionConfig->getKey()
         );
         $data = $jwt->createJwtData($session_data, $this->sessionConfig->getTimeoutMinutes() * 60);
         $token = $jwt->generateToken($data);

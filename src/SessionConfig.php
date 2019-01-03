@@ -2,6 +2,10 @@
 
 namespace ByJG\Session;
 
+use ByJG\Util\JwtKeyInterface;
+use ByJG\Util\JwtKeySecret;
+use ByJG\Util\JwtRsaKey;
+
 class SessionConfig
 {
     protected $serverName;
@@ -10,8 +14,7 @@ class SessionConfig
     protected $timeoutMinutes = 20;
     protected $cookieDomain = null;
     protected $cookiePath = '/';
-    protected $secretKey = null;
-    protected $publicKey = null;
+    protected $jwtKey = null;
     protected $replaceSessionHandler = null;
 
     /**
@@ -45,14 +48,12 @@ class SessionConfig
     }
 
     public function withSecret($secret) {
-        $this->secretKey = $secret;
-        $this->publicKey = null;
+        $this->jwtKey = new JwtKeySecret($secret);
         return $this;
     }
     
     public function withRsaSecret($private, $public) {
-        $this->secretKey = $private;
-        $this->publicKey = $public;
+        $this->jwtKey = new JwtRsaKey($private, $public);
         return $this;
     }
 
@@ -102,19 +103,11 @@ class SessionConfig
     }
 
     /**
-     * @return null
+     * @return JwtKeyInterface
      */
-    public function getSecretKey()
+    public function getKey()
     {
-        return $this->secretKey;
-    }
-
-    /**
-     * @return null
-     */
-    public function getPublicKey()
-    {
-        return $this->publicKey;
+        return $this->jwtKey;
     }
 
     public function isReplaceSession() {

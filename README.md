@@ -160,3 +160,5 @@ We store a cookie named AUTH_BEARER_<context name> with the session name. The PH
 PHP create it by default but we do not use it;
 
 
+----
+[Open source ByJG](http://opensource.byjg.com)
