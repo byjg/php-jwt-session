@@ -10,7 +10,7 @@ jobs:
 #      matrix:
 #        php_version: [5.6, 7.0, 7.1, 7.2, 7.3]
     steps:
-      - uses: docker://docker.io/byjg/php:7.0
+      - uses: docker://docker.io/byjg/php:7.0-cli
       - run: |
           composer install
           vendor/bin/phpunit
