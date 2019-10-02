@@ -14,13 +14,16 @@ Before the session_start() use the command:
 ```php
 <?php
 $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
-    ->withSecret('your super secret key');
+    ->withSecret('your super base64url encoded secret key');
 
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
 session_set_save_handler($handler, true);
 ```
 
 Now, all your `$_SESSION` variable will be saved directly to a JWT Token!!
+
+## Secret key
+Make sure that you are providing a base64url encoded key.
  
 # Motivation
 
@@ -55,7 +58,7 @@ composer require "byjg/jwt-session=2.0.*"
 ```php
 <?php
 $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
-    ->withSecret('your super secret key')
+    ->withSecret('your super base64url encoded secret key')
     ->withTimeoutMinutes(60);   // You can use withTimeoutHours(1)
 
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
@@ -67,7 +70,7 @@ session_set_save_handler($handler, true);
 ```php
 <?php
 $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
-    ->withSecret('your super secret key')
+    ->withSecret('your super base64url encoded secret key')
     ->withSessionContext('MYCONTEXT');
 
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
@@ -79,7 +82,7 @@ session_set_save_handler($handler, true);
 ```php
 <?php
 $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
-    ->withSecret('your super secret key')
+    ->withSecret('your super base64url encoded secret key')
     ->replaceSessionHandler();
 
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
@@ -90,7 +93,7 @@ $handler = new \ByJG\Session\JwtSession($sessionConfig);
 ```php
 <?php
 $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
-    ->withSecret('your super secret key')
+    ->withSecret('your super base64url encoded secret key')
     ->withCookie('.mydomain.com', '/')
     ->replaceSessionHandler();
 
