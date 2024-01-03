@@ -6,7 +6,7 @@ require_once __DIR__ . "/JwtSessionTest.php";
 
 class JwtSessionRsaTest extends JwtSessionTest
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $secret = <<<PRIVATE
 -----BEGIN RSA PRIVATE KEY-----

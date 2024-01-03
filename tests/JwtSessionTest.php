@@ -19,7 +19,7 @@ class JwtSessionTest extends \PHPUnit\Framework\TestCase
 
     const SESSION_ID = "sessionid";
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->sessionConfig = (new \ByJG\Session\SessionConfig('example.com'))
             ->withSecret('secretKey');
@@ -27,7 +27,7 @@ class JwtSessionTest extends \PHPUnit\Framework\TestCase
         $this->object = new JwtSession($this->sessionConfig);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         header_remove();
         $_COOKIE = [];
@@ -42,7 +42,7 @@ class JwtSessionTest extends \PHPUnit\Framework\TestCase
 
     public function testGc()
     {
-        $this->assertTrue($this->object->gc(0));
+        $this->assertEquals(1, $this->object->gc(0));
     }
 
     public function testClose()

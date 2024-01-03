@@ -12,7 +12,7 @@ class JwtSession implements SessionHandlerInterface
     /**
      * @var SessionConfig
      */
-    protected $sessionConfig;
+    protected SessionConfig $sessionConfig;
 
     /**
      * JwtSession constructor.
@@ -36,10 +36,9 @@ class JwtSession implements SessionHandlerInterface
     }
 
     /**
-     * @param bool $startSession
      * @throws JwtSessionException
      */
-    protected function replaceSessionHandler()
+    protected function replaceSessionHandler(): void
     {
         if (session_status() != PHP_SESSION_NONE) {
             throw new JwtSessionException('Session already started!');
@@ -63,7 +62,7 @@ class JwtSession implements SessionHandlerInterface
      * </p>
      * @since 5.4.0
      */
-    public function close()
+    public function close(): bool
     {
         return true;
     }
@@ -72,22 +71,22 @@ class JwtSession implements SessionHandlerInterface
      * Destroy a session
      *
      * @link http://php.net/manual/en/sessionhandlerinterface.destroy.php
-     * @param string $session_id The session ID being destroyed.
+     * @param string $id The session ID being destroyed.
      * @return bool <p>
      * The return value (usually TRUE on success, FALSE on failure).
      * Note this value is returned internally to PHP for processing.
      * </p>
      * @since 5.4.0
      */
-    public function destroy($session_id)
+    public function destroy(string $id): bool
     {
         if (!headers_sent()) {
             setcookie(
                 self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext(),
-                null,
+                "",
                 (time()-3000),
-                $this->sessionConfig->getCookiePath(),
-                $this->sessionConfig->getCookieDomain()
+                $this->sessionConfig->getCookiePath() ?? "",
+                $this->sessionConfig->getCookieDomain() ?? "",
             );
         }
 
@@ -98,7 +97,7 @@ class JwtSession implements SessionHandlerInterface
      * Cleanup old sessions
      *
      * @link http://php.net/manual/en/sessionhandlerinterface.gc.php
-     * @param int $maxlifetime <p>
+     * @param int $max_lifetime <p>
      * Sessions that have not updated for
      * the last maxlifetime seconds will be removed.
      * </p>
@@ -108,7 +107,7 @@ class JwtSession implements SessionHandlerInterface
      * </p>
      * @since 5.4.0
      */
-    public function gc($maxlifetime)
+    public function gc(int $max_lifetime): int|false
     {
         return true;
     }
@@ -117,7 +116,7 @@ class JwtSession implements SessionHandlerInterface
      * Initialize session
      *
      * @link http://php.net/manual/en/sessionhandlerinterface.open.php
-     * @param string $save_path The path where to store/retrieve the session.
+     * @param string $path The path where to store/retrieve the session.
      * @param string $name The session name.
      * @return bool <p>
      * The return value (usually TRUE on success, FALSE on failure).
@@ -125,7 +124,7 @@ class JwtSession implements SessionHandlerInterface
      * </p>
      * @since 5.4.0
      */
-    public function open($save_path, $name)
+    public function open(string $path, string $name): bool
     {
         return true;
     }
@@ -134,7 +133,7 @@ class JwtSession implements SessionHandlerInterface
      * Read session data
      *
      * @link http://php.net/manual/en/sessionhandlerinterface.read.php
-     * @param string $session_id The session id to read data for.
+     * @param string $id The session id to read data for.
      * @return string <p>
      * Returns an encoded string of the read data.
      * If nothing was read, it must return an empty string.
@@ -142,7 +141,7 @@ class JwtSession implements SessionHandlerInterface
      * </p>
      * @since 5.4.0
      */
-    public function read($session_id)
+    public function read(string $id): string
     {
         try {
             if (isset($_COOKIE[self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext()])) {
@@ -168,8 +167,8 @@ class JwtSession implements SessionHandlerInterface
      * Write session data
      *
      * @link http://php.net/manual/en/sessionhandlerinterface.write.php
-     * @param string $session_id The session id.
-     * @param string $session_data <p>
+     * @param string $id The session id.
+     * @param string $data <p>
      * The encoded session data. This data is the
      * result of the PHP internally encoding
      * the $_SESSION superglobal to a serialized
@@ -183,22 +182,22 @@ class JwtSession implements SessionHandlerInterface
      * @throws \ByJG\Util\JwtWrapperException
      * @since 5.4.0
      */
-    public function write($session_id, $session_data)
+    public function write(string $id, string $data): bool
     {
         $jwt = new JwtWrapper(
             $this->sessionConfig->getServerName(),
             $this->sessionConfig->getKey()
         );
-        $data = $jwt->createJwtData($session_data, $this->sessionConfig->getTimeoutMinutes() * 60);
-        $token = $jwt->generateToken($data);
+        $session_data = $jwt->createJwtData($data, $this->sessionConfig->getTimeoutMinutes() * 60);
+        $token = $jwt->generateToken($session_data);
 
         if (!headers_sent()) {
             setcookie(
                 self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext(),
                 $token,
                 (time()+$this->sessionConfig->getTimeoutMinutes()*60) ,
-                $this->sessionConfig->getCookiePath(),
-                $this->sessionConfig->getCookieDomain(),
+                $this->sessionConfig->getCookiePath() ?? "",
+                $this->sessionConfig->getCookieDomain() ?? "",
                 false,
                 true
             );
@@ -210,7 +209,7 @@ class JwtSession implements SessionHandlerInterface
         return true;
     }
 
-    public function serializeSessionData($array)
+    public function serializeSessionData($array): string
     {
         $result = '';
         foreach ($array as $key => $value) {
@@ -225,14 +224,12 @@ class JwtSession implements SessionHandlerInterface
      * @return array
      * @throws JwtSessionException
      */
-    public function unSerializeSessionData($session_data)
+    public function unSerializeSessionData($session_data): array
     {
         $return_data = array();
         $offset = 0;
         while ($offset < strlen($session_data)) {
-            if (!strstr(substr($session_data, $offset), "|")) {
-                throw new JwtSessionException("invalid data, remaining: " . substr($session_data, $offset));
-            }
+            if (!str_contains(substr($session_data, $offset), "|")) throw new JwtSessionException("invalid data, remaining: " . substr($session_data, $offset));
             $pos = strpos($session_data, "|", $offset);
             $num = $pos - $offset;
             $varname = substr($session_data, $offset, $num);
