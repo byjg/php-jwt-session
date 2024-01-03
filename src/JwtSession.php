@@ -3,6 +3,8 @@
 namespace ByJG\Session;
 
 use ByJG\Util\JwtWrapper;
+use ByJG\Util\JwtWrapperException;
+use Exception;
 use SessionHandlerInterface;
 
 class JwtSession implements SessionHandlerInterface
@@ -101,7 +103,7 @@ class JwtSession implements SessionHandlerInterface
      * Sessions that have not updated for
      * the last maxlifetime seconds will be removed.
      * </p>
-     * @return bool <p>
+     * @return int|false <p>
      * The return value (usually TRUE on success, FALSE on failure).
      * Note this value is returned internally to PHP for processing.
      * </p>
@@ -158,7 +160,7 @@ class JwtSession implements SessionHandlerInterface
                 return $data->data;
             }
             return '';
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return '';
         }
     }
@@ -179,7 +181,7 @@ class JwtSession implements SessionHandlerInterface
      * The return value (usually TRUE on success, FALSE on failure).
      * Note this value is returned internally to PHP for processing.
      * </p>
-     * @throws \ByJG\Util\JwtWrapperException
+     * @throws JwtWrapperException
      * @since 5.4.0
      */
     public function write(string $id, string $data): bool
