@@ -1,7 +1,9 @@
 <?php
 namespace ByJG\Session;
 
-class JwtSessionException extends \Exception
+use Exception;
+
+class JwtSessionException extends Exception
 {
 
 }

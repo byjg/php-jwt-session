@@ -1,8 +1,10 @@
 # JwtSession
 
-[![Opensource ByJG](https://img.shields.io/badge/opensource-byjg.com-brightgreen.svg)](http://opensource.byjg.com)
-[![Build Status](https://travis-ci.org/byjg/jwt-session.svg?branch=master)](https://travis-ci.org/byjg/jwt-session)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/byjg/jwt-session/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/byjg/jwt-session/?branch=master)
+[![Build Status](https://github.com/byjg/jwt-session/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/jwt-session/actions/workflows/phpunit.yml) 
+[![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](http://opensource.byjg.com) 
+[![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/jwt-session/) 
+[![GitHub license](https://img.shields.io/github/license/byjg/jwt-session.svg)](https://opensource.byjg.com/opensource/licensing.html) 
+[![GitHub release](https://img.shields.io/github/release/byjg/jwt-session.svg)](https://github.com/byjg/jwt-session/releases/)
 
 JwtSession is a PHP session replacement. Instead of use FileSystem, just use JWT TOKEN. 
 The implementation following the SessionHandlerInterface.
@@ -49,7 +51,7 @@ Because of this _**do not** store in the JWT Token sensible data like passwords_
 # Install
 
 ```
-composer require "byjg/jwt-session=2.0.*"
+composer require "byjg/jwt-session"
 ```
 
  
@@ -163,5 +165,12 @@ We store a cookie named AUTH_BEARER_<context name> with the session name. The PH
 PHP create it by default but we do not use it;
 
 
-----
+## Dependencies
+
+```mermaid  
+flowchart TD  
+    byjg/jwt-session --> byjg/jwt-wrapper  
+```
+
+----  
 [Open source ByJG](http://opensource.byjg.com)
