@@ -19,18 +19,20 @@ jobs:
           - "8.3"
           - "8.2"
           - "8.1"
+          - "8.0"
+          - "7.4"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: composer install
       - run: ./vendor/bin/phpunit
 
   Documentation:
-    runs-on: 'ubuntu-latest'
-    needs: Build
     if: github.ref == 'refs/heads/master'
-    env:
-      DOC_GITHUB_TOKEN: '${{ secrets.DOC_TOKEN }}'
-    steps:
-      - uses: actions/checkout@v3
-      - run: curl https://opensource.byjg.com/add-doc.sh | bash /dev/stdin php jwt-session
+    needs: Build
+    uses: byjg/byjg.github.io/.github/workflows/add-doc.yaml@master
+    with:
+      folder: php
+      project: ${{ github.event.repository.name }}
+    secrets: inherit
+
