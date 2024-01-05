@@ -51,7 +51,7 @@ Because of this _**do not** store in the JWT Token sensible data like passwords_
 # Install
 
 ```
-composer require "byjg/jwt-session=2.0.*"
+composer require "byjg/jwt-session"
 ```
 
  
