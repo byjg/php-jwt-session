@@ -1,0 +1,36 @@
+name: PHPUnit
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "*.*.*"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  Build:
+    runs-on: 'ubuntu-latest'
+    container: 'byjg/php:${{ matrix.php-version }}-cli'
+    strategy:
+      matrix:
+        php-version:
+          - "8.2"
+          - "8.1"
+          - "8.0"
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: composer install
+      - run: ./vendor/bin/phpunit
+
+  Documentation:
+    if: github.ref == 'refs/heads/master'
+    needs: Build
+    uses: byjg/byjg.github.io/.github/workflows/add-doc.yaml@master
+    with:
+      folder: php
+      project: ${{ github.event.repository.name }}
+    secrets: inherit
+

@@ -8,14 +8,14 @@ use ByJG\Util\JwtRsaKey;
 
 class SessionConfig
 {
-    protected $serverName;
+    protected string $serverName;
 
-    protected $sessionContext = 'default';
-    protected $timeoutMinutes = 20;
-    protected $cookieDomain = null;
-    protected $cookiePath = '/';
-    protected $jwtKey = null;
-    protected $replaceSessionHandler = null;
+    protected string $sessionContext = 'default';
+    protected int $timeoutMinutes = 20;
+    protected ?string $cookieDomain = null;
+    protected string $cookiePath = '/';
+    protected ?JwtKeyInterface $jwtKey = null;
+    protected ?bool $replaceSessionHandler = null;
 
     /**
      * SessionConfig constructor.
@@ -26,46 +26,53 @@ class SessionConfig
         $this->serverName = $serverName;
     }
 
-    public function withSessionContext($context) {
+    public function withSessionContext($context): static
+    {
         $this->sessionContext = $context;
         return $this;
     }
 
-    public function withTimeoutMinutes($timeout) {
+    public function withTimeoutMinutes($timeout): static
+    {
         $this->timeoutMinutes = $timeout;
         return $this;
     }
 
-    public function withTimeoutHours($timeout) {
+    public function withTimeoutHours($timeout): static
+    {
         $this->timeoutMinutes = $timeout * 60;
         return $this;
     }
 
-    public function withCookie($domain, $path = "/") {
+    public function withCookie($domain, $path = "/"): static
+    {
         $this->cookieDomain = $domain;
         $this->cookiePath = $path;
         return $this;
     }
 
-    public function withSecret($secret) {
+    public function withSecret($secret): static
+    {
         $this->jwtKey = new JwtKeySecret($secret);
         return $this;
     }
     
-    public function withRsaSecret($private, $public) {
+    public function withRsaSecret($private, $public): static
+    {
         $this->jwtKey = new JwtRsaKey($private, $public);
         return $this;
     }
 
-    public function replaceSessionHandler($startSession = true) {
+    public function replaceSessionHandler($startSession = true): static
+    {
         $this->replaceSessionHandler = $startSession;
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getServerName()
+    public function getServerName(): string
     {
         return $this->serverName;
     }
@@ -73,7 +80,7 @@ class SessionConfig
     /**
      * @return string
      */
-    public function getSessionContext()
+    public function getSessionContext(): string
     {
         return $this->sessionContext;
     }
@@ -81,15 +88,15 @@ class SessionConfig
     /**
      * @return int
      */
-    public function getTimeoutMinutes()
+    public function getTimeoutMinutes(): int
     {
         return $this->timeoutMinutes;
     }
 
     /**
-     * @return null
+     * @return string|null
      */
-    public function getCookieDomain()
+    public function getCookieDomain(): ?string
     {
         return $this->cookieDomain;
     }
@@ -97,24 +104,26 @@ class SessionConfig
     /**
      * @return string
      */
-    public function getCookiePath()
+    public function getCookiePath(): string
     {
         return $this->cookiePath;
     }
 
     /**
-     * @return JwtKeyInterface
+     * @return JwtKeyInterface|null
      */
-    public function getKey()
+    public function getKey(): ?JwtKeyInterface
     {
         return $this->jwtKey;
     }
 
-    public function isReplaceSession() {
+    public function isReplaceSession(): bool
+    {
         return $this->replaceSessionHandler !== null;
     }
 
-    public function isStartSession() {
+    public function isStartSession(): bool
+    {
         return $this->replaceSessionHandler === true;
     }
 }

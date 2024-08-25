@@ -1,12 +1,17 @@
 <?php
 
 use ByJG\Session\JwtSession;
+use ByJG\Session\JwtSessionException;
+use ByJG\Session\SessionConfig;
 
 require_once __DIR__ . "/JwtSessionTest.php";
 
 class JwtSessionRsaTest extends JwtSessionTest
 {
-    protected function setUp()
+    /**
+     * @throws JwtSessionException
+     */
+    protected function setUp(): void
     {
         $secret = <<<PRIVATE
 -----BEGIN RSA PRIVATE KEY-----
@@ -50,7 +55,7 @@ owIDAQAB
 -----END PUBLIC KEY-----
 PUBLIC;
 
-        $this->sessionConfig = (new \ByJG\Session\SessionConfig('example.com'))
+        $this->sessionConfig = (new SessionConfig('example.com'))
             ->withRsaSecret($secret, $public);
 
         $this->object = new JwtSession($this->sessionConfig);

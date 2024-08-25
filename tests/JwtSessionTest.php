@@ -1,33 +1,40 @@
 <?php
 
 use ByJG\Session\JwtSession;
+use ByJG\Session\JwtSessionException;
+use ByJG\Session\SessionConfig;
+use ByJG\Util\JwtWrapperException;
+use PHPUnit\Framework\TestCase;
 
 ob_start();
 define("SETCOOKIE_FORTEST", "TESTCASE");
 
-class JwtSessionTest extends \PHPUnit\Framework\TestCase
+class JwtSessionTest extends TestCase
 {
     /**
-     * @var JwtSession
+     * @var ?JwtSession
      */
-    protected $object;
+    protected ?JwtSession $object;
 
     /**
-     * @var \ByJG\Session\SessionConfig
+     * @var SessionConfig
      */
-    protected $sessionConfig;
+    protected SessionConfig $sessionConfig;
 
     const SESSION_ID = "sessionid";
 
-    protected function setUp()
+    /**
+     * @throws JwtSessionException
+     */
+    protected function setUp(): void
     {
-        $this->sessionConfig = (new \ByJG\Session\SessionConfig('example.com'))
+        $this->sessionConfig = (new SessionConfig('example.com'))
             ->withSecret('secretKey');
 
         $this->object = new JwtSession($this->sessionConfig);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         header_remove();
         $_COOKIE = [];
@@ -42,7 +49,7 @@ class JwtSessionTest extends \PHPUnit\Framework\TestCase
 
     public function testGc()
     {
-        $this->assertTrue($this->object->gc(0));
+        $this->assertEquals(1, $this->object->gc(0));
     }
 
     public function testClose()
@@ -50,7 +57,7 @@ class JwtSessionTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->object->close());
     }
 
-    public function dataProvider()
+    public function dataProvider(): array
     {
         $obj = new stdClass();
         $obj->prop1 = "value1";
@@ -139,6 +146,7 @@ class JwtSessionTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProvider
      * @param $object
      * @param $serialize
+     * @throws JwtWrapperException
      */
     public function testReadWrite($object, $serialize)
     {
