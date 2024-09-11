@@ -161,7 +161,7 @@ https://github.com/byjg/jwt-wrapper
 
 # How it works
 
-We store a cookie named AUTH_BEARER_<context name> with the session name. The PHPSESSID cookie is still created because
+We store a cookie named `AUTH_BEARER_` followed by the context name with the session name. The PHPSESSID cookie is still created because
 PHP create it by default but we do not use it;
 
 
