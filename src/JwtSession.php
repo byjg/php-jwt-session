@@ -2,8 +2,8 @@
 
 namespace ByJG\Session;
 
-use ByJG\Util\JwtWrapper;
-use ByJG\Util\JwtWrapperException;
+use ByJG\JwtWrapper\JwtWrapper;
+use ByJG\JwtWrapper\JwtWrapperException;
 use Exception;
 use SessionHandlerInterface;
 
@@ -190,7 +190,7 @@ class JwtSession implements SessionHandlerInterface
             $this->sessionConfig->getServerName(),
             $this->sessionConfig->getKey()
         );
-        $session_data = $jwt->createJwtData($data, $this->sessionConfig->getTimeoutMinutes() * 60);
+        $session_data = $jwt->createJwtData(['data' => $data], $this->sessionConfig->getTimeoutMinutes() * 60, 0, null);
         $token = $jwt->generateToken($session_data);
 
         if (!headers_sent()) {
@@ -236,7 +236,7 @@ class JwtSession implements SessionHandlerInterface
             $num = $pos - $offset;
             $varname = substr($session_data, $offset, $num);
             $offset += $num + 1;
-            $data = unserialize(substr($session_data, $offset));
+            $data = @unserialize(substr($session_data, $offset), ['allowed_classes' => true]);
             $return_data[$varname] = $data;
             $offset += strlen(serialize($data));
         }
