@@ -2,9 +2,9 @@
 
 namespace ByJG\Session;
 
-use ByJG\Util\JwtKeyInterface;
-use ByJG\Util\JwtKeySecret;
-use ByJG\Util\JwtRsaKey;
+use ByJG\JwtWrapper\JwtKeyInterface;
+use ByJG\JwtWrapper\JwtHashHmacSecret;
+use ByJG\JwtWrapper\JwtOpenSSLKey;
 
 class SessionConfig
 {
@@ -53,13 +53,13 @@ class SessionConfig
 
     public function withSecret($secret): static
     {
-        $this->jwtKey = new JwtKeySecret($secret);
+        $this->jwtKey = new JwtHashHmacSecret($secret);
         return $this;
     }
-    
+
     public function withRsaSecret($private, $public): static
     {
-        $this->jwtKey = new JwtRsaKey($private, $public);
+        $this->jwtKey = new JwtOpenSSLKey($private, $public);
         return $this;
     }
 

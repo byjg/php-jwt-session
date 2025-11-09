@@ -16,9 +16,10 @@ jobs:
     strategy:
       matrix:
         php-version:
+          - "8.4"
+          - "8.3"
           - "8.2"
           - "8.1"
-          - "8.0"
 
     steps:
       - uses: actions/checkout@v4
@@ -32,5 +33,6 @@ jobs:
     with:
       folder: php
       project: ${{ github.event.repository.name }}
-    secrets: inherit
+    secrets:
+      DOC_TOKEN: ${{ secrets.DOC_TOKEN }}
 
