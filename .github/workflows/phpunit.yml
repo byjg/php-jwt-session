@@ -12,16 +12,19 @@ on:
 jobs:
   Build:
     runs-on: 'ubuntu-latest'
-    container: 'byjg/php:${{ matrix.php-version }}-cli'
+    container:
+      image: 'byjg/php:${{ matrix.php-version }}-cli'
+      options: --user root --privileged
     strategy:
       matrix:
         php-version:
+          - "8.4"
+          - "8.3"
           - "8.2"
           - "8.1"
-          - "8.0"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: composer install
       - run: ./vendor/bin/phpunit
 
@@ -32,5 +35,6 @@ jobs:
     with:
       folder: php
       project: ${{ github.event.repository.name }}
-    secrets: inherit
+    secrets:
+      DOC_TOKEN: ${{ secrets.DOC_TOKEN }}
 
