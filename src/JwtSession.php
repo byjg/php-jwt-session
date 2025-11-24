@@ -9,7 +9,7 @@ use SessionHandlerInterface;
 
 class JwtSession implements SessionHandlerInterface
 {
-    const COOKIE_PREFIX = "AUTH_BEARER_";
+    const string COOKIE_PREFIX = "AUTH_BEARER_";
 
     /**
      * @var SessionConfig
@@ -152,9 +152,13 @@ class JwtSession implements SessionHandlerInterface
     {
         try {
             if (isset($_COOKIE[self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext()])) {
+                $key = $this->sessionConfig->getKey();
+                if ($key === null) {
+                    return '';
+                }
                 $jwt = new JwtWrapper(
                     $this->sessionConfig->getServerName(),
-                    $this->sessionConfig->getKey()
+                    $key
                 );
                 $data = $jwt->extractData($_COOKIE[self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext()]);
 
@@ -192,9 +196,13 @@ class JwtSession implements SessionHandlerInterface
     #[\Override]
     public function write(string $id, string $data): bool
     {
+        $key = $this->sessionConfig->getKey();
+        if ($key === null) {
+            return false;
+        }
         $jwt = new JwtWrapper(
             $this->sessionConfig->getServerName(),
-            $this->sessionConfig->getKey()
+            $key
         );
         $session_data = $jwt->createJwtData(['data' => $data], $this->sessionConfig->getTimeoutMinutes() * 60, 0, null);
         $token = $jwt->generateToken($session_data);
@@ -239,6 +247,9 @@ class JwtSession implements SessionHandlerInterface
         while ($offset < strlen($session_data)) {
             if (!str_contains(substr($session_data, $offset), "|")) throw new JwtSessionException("invalid data, remaining: " . substr($session_data, $offset));
             $pos = strpos($session_data, "|", $offset);
+            if ($pos === false) {
+                throw new JwtSessionException("invalid data, pipe not found");
+            }
             $num = $pos - $offset;
             $varname = substr($session_data, $offset, $num);
             $offset += $num + 1;

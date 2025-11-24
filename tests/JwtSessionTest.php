@@ -22,7 +22,7 @@ class JwtSessionTest extends TestCase
      */
     protected SessionConfig $sessionConfig;
 
-    const SESSION_ID = "sessionid";
+    const string SESSION_ID = "sessionid";
 
     /**
      * @throws JwtSessionException
