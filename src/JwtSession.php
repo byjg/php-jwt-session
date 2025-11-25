@@ -2,14 +2,14 @@
 
 namespace ByJG\Session;
 
-use ByJG\Util\JwtWrapper;
-use ByJG\Util\JwtWrapperException;
+use ByJG\JwtWrapper\JwtWrapper;
+use ByJG\JwtWrapper\JwtWrapperException;
 use Exception;
 use SessionHandlerInterface;
 
 class JwtSession implements SessionHandlerInterface
 {
-    const COOKIE_PREFIX = "AUTH_BEARER_";
+    const string COOKIE_PREFIX = "AUTH_BEARER_";
 
     /**
      * @var SessionConfig
@@ -64,6 +64,7 @@ class JwtSession implements SessionHandlerInterface
      * </p>
      * @since 5.4.0
      */
+    #[\Override]
     public function close(): bool
     {
         return true;
@@ -80,6 +81,7 @@ class JwtSession implements SessionHandlerInterface
      * </p>
      * @since 5.4.0
      */
+    #[\Override]
     public function destroy(string $id): bool
     {
         if (!headers_sent()) {
@@ -87,7 +89,7 @@ class JwtSession implements SessionHandlerInterface
                 self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext(),
                 "",
                 (time()-3000),
-                $this->sessionConfig->getCookiePath() ?? "",
+                $this->sessionConfig->getCookiePath(),
                 $this->sessionConfig->getCookieDomain() ?? "",
             );
         }
@@ -99,19 +101,20 @@ class JwtSession implements SessionHandlerInterface
      * Cleanup old sessions
      *
      * @link http://php.net/manual/en/sessionhandlerinterface.gc.php
+     *
      * @param int $max_lifetime <p>
      * Sessions that have not updated for
      * the last maxlifetime seconds will be removed.
      * </p>
-     * @return int|false <p>
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
-     * </p>
+     *
+     * @return int|false <p> The return value (usually TRUE on success, FALSE on failure). Note this value is returned internally to PHP for processing. </p>
+     *
      * @since 5.4.0
      */
+    #[\Override]
     public function gc(int $max_lifetime): int|false
     {
-        return true;
+        return 1;
     }
 
     /**
@@ -126,6 +129,7 @@ class JwtSession implements SessionHandlerInterface
      * </p>
      * @since 5.4.0
      */
+    #[\Override]
     public function open(string $path, string $name): bool
     {
         return true;
@@ -143,13 +147,18 @@ class JwtSession implements SessionHandlerInterface
      * </p>
      * @since 5.4.0
      */
+    #[\Override]
     public function read(string $id): string
     {
         try {
             if (isset($_COOKIE[self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext()])) {
+                $key = $this->sessionConfig->getKey();
+                if ($key === null) {
+                    return '';
+                }
                 $jwt = new JwtWrapper(
                     $this->sessionConfig->getServerName(),
-                    $this->sessionConfig->getKey()
+                    $key
                 );
                 $data = $jwt->extractData($_COOKIE[self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext()]);
 
@@ -184,13 +193,18 @@ class JwtSession implements SessionHandlerInterface
      * @throws JwtWrapperException
      * @since 5.4.0
      */
+    #[\Override]
     public function write(string $id, string $data): bool
     {
+        $key = $this->sessionConfig->getKey();
+        if ($key === null) {
+            return false;
+        }
         $jwt = new JwtWrapper(
             $this->sessionConfig->getServerName(),
-            $this->sessionConfig->getKey()
+            $key
         );
-        $session_data = $jwt->createJwtData($data, $this->sessionConfig->getTimeoutMinutes() * 60);
+        $session_data = $jwt->createJwtData(['data' => $data], $this->sessionConfig->getTimeoutMinutes() * 60, 0, null);
         $token = $jwt->generateToken($session_data);
 
         if (!headers_sent()) {
@@ -198,7 +212,7 @@ class JwtSession implements SessionHandlerInterface
                 self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext(),
                 $token,
                 (time()+$this->sessionConfig->getTimeoutMinutes()*60) ,
-                $this->sessionConfig->getCookiePath() ?? "",
+                $this->sessionConfig->getCookiePath(),
                 $this->sessionConfig->getCookieDomain() ?? "",
                 false,
                 true
@@ -233,10 +247,13 @@ class JwtSession implements SessionHandlerInterface
         while ($offset < strlen($session_data)) {
             if (!str_contains(substr($session_data, $offset), "|")) throw new JwtSessionException("invalid data, remaining: " . substr($session_data, $offset));
             $pos = strpos($session_data, "|", $offset);
+            if ($pos === false) {
+                throw new JwtSessionException("invalid data, pipe not found");
+            }
             $num = $pos - $offset;
             $varname = substr($session_data, $offset, $num);
             $offset += $num + 1;
-            $data = unserialize(substr($session_data, $offset));
+            $data = @unserialize(substr($session_data, $offset), ['allowed_classes' => true]);
             $return_data[$varname] = $data;
             $offset += strlen(serialize($data));
         }

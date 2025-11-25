@@ -1,10 +1,11 @@
 <?php
 
+use ByJG\JwtWrapper\JwtWrapperException;
 use ByJG\Session\JwtSession;
 use ByJG\Session\JwtSessionException;
 use ByJG\Session\SessionConfig;
-use ByJG\Util\JwtWrapperException;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 ob_start();
 define("SETCOOKIE_FORTEST", "TESTCASE");
@@ -21,7 +22,7 @@ class JwtSessionTest extends TestCase
      */
     protected SessionConfig $sessionConfig;
 
-    const SESSION_ID = "sessionid";
+    const string SESSION_ID = "sessionid";
 
     /**
      * @throws JwtSessionException
@@ -57,7 +58,7 @@ class JwtSessionTest extends TestCase
         $this->assertTrue($this->object->close());
     }
 
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         $obj = new stdClass();
         $obj->prop1 = "value1";
@@ -119,35 +120,21 @@ class JwtSessionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProvider
-     * @param $input
-     * @param $expected
-     */
+    #[DataProvider('dataProvider')]
     public function testSerializeSessionData($input, $expected)
     {
         $result = $this->object->serializeSessionData($input);
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @dataProvider dataProvider
-     * @param $expected
-     * @param $input
-     * @throws Exception
-     */
+    #[DataProvider('dataProvider')]
     public function testUnserializeData($expected, $input)
     {
         $result = $this->object->unSerializeSessionData($input);
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @dataProvider dataProvider
-     * @param $object
-     * @param $serialize
-     * @throws JwtWrapperException
-     */
+    #[DataProvider('dataProvider')]
     public function testReadWrite($object, $serialize)
     {
         $this->object->write("SESSID", $serialize);
