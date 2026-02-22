@@ -30,7 +30,7 @@ class JwtSessionTest extends TestCase
     protected function setUp(): void
     {
         $this->sessionConfig = (new SessionConfig('example.com'))
-            ->withSecret('secretKey');
+            ->withSecret('c2VjcmV0S2V5X3RoaXNfaXNfYV92ZXJ5X2xvbmdfc2VjcmV0X2tleV90aGF0X2lzXzY0X2J5dGVzX2xvbmchIQ==');
 
         $this->object = new JwtSession($this->sessionConfig);
     }
