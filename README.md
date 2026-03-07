@@ -1,4 +1,10 @@
+---
+tags: [php, cryptography, authentication]
+---
+
 # JWT Session Handler
+
+A PHP session replacement that stores session data in JWT tokens instead of the filesystem. This implementation follows the SessionHandlerInterface standard, enabling stateless sessions without the need for dedicated session servers like Redis or Memcached. Perfect for distributed applications and microservices architectures.
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-%23ea4aaa?logo=githubsponsors&logoColor=white&labelColor=0d1117)](https://github.com/sponsors/byjg)
 [![Build Status](https://github.com/byjg/jwt-session/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/jwt-session/actions/workflows/phpunit.yml)
@@ -7,16 +13,14 @@
 [![GitHub license](https://img.shields.io/github/license/byjg/jwt-session.svg)](https://opensource.byjg.com/opensource/licensing.html)
 [![GitHub release](https://img.shields.io/github/release/byjg/jwt-session.svg)](https://github.com/byjg/jwt-session/releases/)
 
-A PHP session replacement that stores session data in JWT tokens instead of the filesystem. This implementation follows the SessionHandlerInterface standard, enabling stateless sessions without the need for dedicated session servers like Redis or Memcached. Perfect for distributed applications and microservices architectures.
-
 ## Documentation
 
-- [Getting Started](docs/getting-started.md) - Installation, basic usage, and motivation
-- [Configuration](docs/configuration.md) - Session timeout, contexts, cookies, and all configuration options
-- [RSA Keys](docs/rsa-keys.md) - Using RSA private/public keys for enhanced security
-- [How It Works](docs/how-it-works.md) - Architecture and internal implementation details
-- [Security](docs/security.md) - Security considerations and best practices
-- [API Reference](docs/api-reference.md) - Complete API documentation for all classes and methods
+- [Getting Started](getting-started) - Installation, basic usage, and motivation
+- [Configuration](configuration) - Session timeout, contexts, cookies, and all configuration options
+- [RSA Keys](rsa-keys) - Using RSA private/public keys for enhanced security
+- [How It Works](how-it-works) - Architecture and internal implementation details
+- [Security](security) - Security considerations and best practices
+- [API Reference](api-reference) - Complete API documentation for all classes and methods
 
 # How to use:
 
@@ -69,7 +73,7 @@ $handler = new \ByJG\Session\JwtSession($sessionConfig);
 session_set_save_handler($handler, true);
 ```
 
-For complete configuration options including cookie domains and automatic session handler replacement, see [Configuration](docs/configuration.md).
+For complete configuration options including cookie domains and automatic session handler replacement, see [Configuration](configuration).
 
 ## Using RSA Private/Public Keys
 
@@ -124,7 +128,7 @@ $sessionConfig = (new \ByJG\Session\SessionConfig('example.com'))
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
 ```
 
-For more details about RSA keys and how to generate them, see [RSA Keys](docs/rsa-keys.md) and https://github.com/byjg/jwt-wrapper
+For more details about RSA keys and how to generate them, see [RSA Keys](rsa-keys) and https://github.com/byjg/jwt-wrapper
 
 
 ## Dependencies
