@@ -1,4 +1,11 @@
+---
+sidebar_key: jwt-session
+tags: [php, cryptography, authentication]
+---
+
 # JWT Session Handler
+
+A PHP session replacement that stores session data in JWT tokens instead of the filesystem. This implementation follows the SessionHandlerInterface standard, enabling stateless sessions without the need for dedicated session servers like Redis or Memcached. Perfect for distributed applications and microservices architectures.
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-%23ea4aaa?logo=githubsponsors&logoColor=white&labelColor=0d1117)](https://github.com/sponsors/byjg)
 [![Build Status](https://github.com/byjg/jwt-session/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/jwt-session/actions/workflows/phpunit.yml)
@@ -6,8 +13,6 @@
 [![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/jwt-session/)
 [![GitHub license](https://img.shields.io/github/license/byjg/jwt-session.svg)](https://opensource.byjg.com/opensource/licensing.html)
 [![GitHub release](https://img.shields.io/github/release/byjg/jwt-session.svg)](https://github.com/byjg/jwt-session/releases/)
-
-A PHP session replacement that stores session data in JWT tokens instead of the filesystem. This implementation follows the SessionHandlerInterface standard, enabling stateless sessions without the need for dedicated session servers like Redis or Memcached. Perfect for distributed applications and microservices architectures.
 
 ## Documentation
 
