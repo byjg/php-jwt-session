@@ -11,7 +11,7 @@ A PHP session replacement that stores session data in JWT tokens instead of the 
 [![Build Status](https://github.com/byjg/jwt-session/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/jwt-session/actions/workflows/phpunit.yml)
 [![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](http://opensource.byjg.com)
 [![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/jwt-session/)
-[![GitHub license](https://img.shields.io/github/license/byjg/jwt-session.svg)](https://opensource.byjg.com/opensource/licensing.html)
+[![GitHub license](https://img.shields.io/github/license/byjg/jwt-session.svg)](https://opensource.byjg.com/license/)
 [![GitHub release](https://img.shields.io/github/release/byjg/jwt-session.svg)](https://github.com/byjg/jwt-session/releases/)
 
 ## Documentation
@@ -131,13 +131,6 @@ $handler = new \ByJG\Session\JwtSession($sessionConfig);
 
 For more details about RSA keys and how to generate them, see [RSA Keys](docs/rsa-keys.md) and https://github.com/byjg/jwt-wrapper
 
-
-## Dependencies
-
-```mermaid  
-flowchart TD  
-    byjg/jwt-session --> byjg/jwt-wrapper  
-```
 
 ----  
 [Open source ByJG](http://opensource.byjg.com)
