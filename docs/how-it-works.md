@@ -20,6 +20,8 @@ The implementation follows PHP's `SessionHandlerInterface`, which requires imple
 - **`write()`** - Write session data to JWT cookie
 - **`destroy()`** - Destroy a session by clearing the cookie
 - **`gc()`** - Garbage collection (not used in JWT sessions as tokens are self-expiring)
+- **`create_sid()`** - Generate a session id (PHP 9.0 requires it; PHP 8.6 warns when missing)
+- **`validateId()`** - Tell whether an id holds data, by reading the JWT cookie
 
 ## Session Flow
 

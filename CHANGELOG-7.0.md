@@ -39,6 +39,15 @@ While 7.0 is unreleased these resolve to `7.0.x-dev` from each component's
 - The build matrix now includes PHP 8.6.
 - The Psalm job runs on PHP 8.5 and installs Psalm from `tools/psalm`.
 
+## Forward compatibility
+
+- `JwtSession` implements `create_sid()` and `validateId()`. PHP 9.0 requires
+  both on `SessionHandlerInterface`, and PHP 8.6 raises a warning without them,
+  which failed the test suite (`failOnWarning`). Behaviour is unchanged:
+  `create_sid()` uses PHP's own generator, and `validateId()` reports a session
+  as existing when reading it returns data -- what PHP does for a handler that
+  lacks the method.
+
 ## Housekeeping
 
 - `phpunit.xml.dist` renamed to `phpunit.xml`.
