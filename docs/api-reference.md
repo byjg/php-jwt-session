@@ -77,6 +77,27 @@ Garbage collection (no-op in JWT implementation as tokens are self-expiring).
 
 **Returns:** true
 
+##### `create_sid(): string`
+
+Generate a new session id, using PHP's own generator (`session_create_id()`).
+The session data lives in the JWT cookie and is not keyed by the id, so any
+unique value does.
+
+**Returns:** The new session id
+
+##### `validateId(string $id): bool`
+
+Tell whether a session id holds data. Reads the JWT cookie, so it returns
+false when the cookie is missing, expired or invalid.
+
+**Parameters:**
+- `$id` (string): Session ID (not used in JWT implementation)
+
+**Returns:** true when the session has data
+
+Both methods will be required by `SessionHandlerInterface` in PHP 9.0; PHP 8.6
+already warns when they are missing.
+
 #### Public Helper Methods
 
 ##### `serializeSessionData(array $array): string`
