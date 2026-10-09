@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests;
+
 use ByJG\Session\JwtSession;
 use ByJG\Session\JwtSessionException;
 use ByJG\Session\SessionConfig;

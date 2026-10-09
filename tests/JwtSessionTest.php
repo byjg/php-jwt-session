@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests;
+
 use ByJG\JwtWrapper\JwtWrapperException;
 use ByJG\Session\JwtSession;
 use ByJG\Session\JwtSessionException;
@@ -84,7 +86,7 @@ class JwtSessionTest extends TestCase
 
     public static function dataProvider(): array
     {
-        $obj = new stdClass();
+        $obj = new \stdClass();
         $obj->prop1 = "value1";
         $obj->prop2 = "value2";
 

@@ -143,7 +143,7 @@ public function __construct(string $serverName)
 Set the secret key for JWT encoding/decoding.
 
 **Parameters:**
-- `$secret` (string): Base64url encoded secret key
+- `$secret` (string): Base64 encoded secret key that decodes to at least 64 bytes (HS512). See [Configuration](configuration.md#withsecretstring-secret).
 
 **Returns:** Self for method chaining
 
@@ -261,7 +261,7 @@ use ByJG\Session\JwtSession;
 
 try {
     $config = (new SessionConfig('example.com'))
-        ->withSecret('your-base64url-encoded-secret')
+        ->withSecret('your-base64-encoded-64-byte-secret')
         ->withTimeoutMinutes(30)
         ->withCookie('.example.com', '/');
 
@@ -283,7 +283,7 @@ try {
 ```php
 <?php
 $config = (new SessionConfig('example.com'))
-    ->withSecret('your-base64url-encoded-secret')
+    ->withSecret('your-base64-encoded-64-byte-secret')
     ->replaceSessionHandler(true); // Automatically starts session
 
 $handler = new JwtSession($config);
