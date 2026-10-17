@@ -24,7 +24,7 @@ A PHP session replacement that stores session data in JWT tokens instead of the 
 - [Security](docs/security.md) - Security considerations and best practices
 - [API Reference](docs/api-reference.md) - Complete API documentation for all classes and methods
 
-# How to use:
+## How to use
 
 Before the session_start() use the command: 
 
@@ -49,15 +49,9 @@ php -r 'echo base64_encode(random_bytes(64)), PHP_EOL;'
 
 For more details on motivation, security considerations, and best practices, see the [Documentation](#documentation) section above.
  
-# Install
+## Configuration Examples
 
-```
-composer require "byjg/jwt-session"
-```
-
-# Configuration Examples
-
-## Setting the validity of JWT Token
+### Setting the validity of JWT Token
 
 ```php
 <?php
@@ -69,7 +63,7 @@ $handler = new \ByJG\Session\JwtSession($sessionConfig);
 session_set_save_handler($handler, true);
 ```
 
-## Setting different Session Contexts
+### Setting different Session Contexts
 
 ```php
 <?php
@@ -83,7 +77,7 @@ session_set_save_handler($handler, true);
 
 For complete configuration options including cookie domains and automatic session handler replacement, see [Configuration](docs/configuration.md).
 
-## Using RSA Private/Public Keys
+### Using RSA Private/Public Keys
 
 ```php
 <?php
@@ -137,6 +131,12 @@ $handler = new \ByJG\Session\JwtSession($sessionConfig);
 ```
 
 For more details about RSA keys and how to generate them, see [RSA Keys](docs/rsa-keys.md) and https://github.com/byjg/jwt-wrapper
+
+## Installation
+
+```bash
+composer require "byjg/jwt-session"
+```
 
 ## Running Tests
 

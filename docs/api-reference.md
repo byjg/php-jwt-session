@@ -75,7 +75,7 @@ Garbage collection (no-op in JWT implementation as tokens are self-expiring).
 **Parameters:**
 - `$max_lifetime` (int): Maximum session lifetime
 
-**Returns:** true
+**Returns:** 1
 
 ##### `create_sid(): string`
 
@@ -258,6 +258,7 @@ Exception class for JWT session errors.
 <?php
 use ByJG\Session\SessionConfig;
 use ByJG\Session\JwtSession;
+use ByJG\Session\JwtSessionException;
 
 try {
     $config = (new SessionConfig('example.com'))

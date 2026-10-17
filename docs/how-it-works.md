@@ -6,7 +6,7 @@ sidebar_position: 4
 
 ## Cookie Storage
 
-JwtSession stores a cookie named `AUTH_BEARER_` followed by the context name with the session name.
+JwtSession stores a cookie named `AUTH_BEARER_` followed by the session context name (`AUTH_BEARER_default` by default).
 
 The `PHPSESSID` cookie is still created because PHP creates it by default, but we do not use it.
 
