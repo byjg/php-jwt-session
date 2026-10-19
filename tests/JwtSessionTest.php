@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests;
+
 use ByJG\JwtWrapper\JwtWrapperException;
 use ByJG\Session\JwtSession;
 use ByJG\Session\JwtSessionException;
@@ -58,9 +60,33 @@ class JwtSessionTest extends TestCase
         $this->assertTrue($this->object->close());
     }
 
+    public function testCreateSid()
+    {
+        $sid = $this->object->create_sid();
+
+        $this->assertNotEmpty($sid);
+        $this->assertMatchesRegularExpression('/^[a-zA-Z0-9,-]+$/', $sid);
+        $this->assertNotEquals($sid, $this->object->create_sid());
+    }
+
+    public function testValidateIdWithoutSession()
+    {
+        $this->assertFalse($this->object->validateId(self::SESSION_ID));
+    }
+
+    /**
+     * @throws JwtWrapperException
+     */
+    public function testValidateIdWithSession()
+    {
+        $this->object->write(self::SESSION_ID, 'key|' . serialize('value'));
+
+        $this->assertTrue($this->object->validateId(self::SESSION_ID));
+    }
+
     public static function dataProvider(): array
     {
-        $obj = new stdClass();
+        $obj = new \stdClass();
         $obj->prop1 = "value1";
         $obj->prop2 = "value2";
 

@@ -6,7 +6,7 @@ sidebar_position: 4
 
 ## Cookie Storage
 
-JwtSession stores a cookie named `AUTH_BEARER_` followed by the context name with the session name.
+JwtSession stores a cookie named `AUTH_BEARER_` followed by the session context name (`AUTH_BEARER_default` by default).
 
 The `PHPSESSID` cookie is still created because PHP creates it by default, but we do not use it.
 
@@ -20,6 +20,8 @@ The implementation follows PHP's `SessionHandlerInterface`, which requires imple
 - **`write()`** - Write session data to JWT cookie
 - **`destroy()`** - Destroy a session by clearing the cookie
 - **`gc()`** - Garbage collection (not used in JWT sessions as tokens are self-expiring)
+- **`create_sid()`** - Generate a session id (PHP 9.0 requires it; PHP 8.6 warns when missing)
+- **`validateId()`** - Tell whether an id holds data, by reading the JWT cookie
 
 ## Session Flow
 

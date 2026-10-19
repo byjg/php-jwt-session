@@ -1,12 +1,15 @@
 <?php
 
+use ByJG\Session\JwtSession;
+use ByJG\Session\SessionConfig;
+
 require_once __DIR__ . "/../vendor/autoload.php";
 
 if (!isset($_REQUEST['turnoff'])) {   // Just for turnoff the session
-    $sessionConfig = (new \ByJG\Session\SessionConfig('api.com.br'))
-        ->withSecret('1234567890')
+    $sessionConfig = (new SessionConfig('api.com.br'))
+        ->withSecret('c2VjcmV0S2V5X3RoaXNfaXNfYV92ZXJ5X2xvbmdfc2VjcmV0X2tleV90aGF0X2lzXzY0X2J5dGVzX2xvbmchIQ==')
         ->replaceSessionHandler();
-    $handler = new \ByJG\Session\JwtSession($sessionConfig);
+    $handler = new JwtSession($sessionConfig);
 } else {
     echo "<H1>JWT Session is disabled</H1>";
     session_start();

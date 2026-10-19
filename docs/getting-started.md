@@ -21,7 +21,7 @@ Before calling `session_start()`, configure and set up the JwtSession handler:
 ```php
 <?php
 $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
-    ->withSecret('your super base64url encoded secret key');
+    ->withSecret('your base64 encoded 64-byte secret key');
 
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
 session_set_save_handler($handler, true);
@@ -31,7 +31,13 @@ Now, all your `$_SESSION` variables will be saved directly to a JWT Token!
 
 ## Secret Key
 
-Make sure that you are providing a base64url encoded key.
+The secret must be **base64 encoded** (standard alphabet) and decode to **at least 64 bytes**:
+the token is signed with HS512, and a shorter key fails with `Provided key is too short` when the
+session is written. Create one with:
+
+```bash
+php -r 'echo base64_encode(random_bytes(64)), PHP_EOL;'
+```
 
 ## Motivation
 

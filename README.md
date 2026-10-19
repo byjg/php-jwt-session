@@ -8,11 +8,12 @@ tags: [php, cryptography, authentication]
 A PHP session replacement that stores session data in JWT tokens instead of the filesystem. This implementation follows the SessionHandlerInterface standard, enabling stateless sessions without the need for dedicated session servers like Redis or Memcached. Perfect for distributed applications and microservices architectures.
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-%23ea4aaa?logo=githubsponsors&logoColor=white&labelColor=0d1117)](https://github.com/sponsors/byjg)
-[![Build Status](https://github.com/byjg/jwt-session/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/jwt-session/actions/workflows/phpunit.yml)
-[![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](http://opensource.byjg.com)
-[![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/jwt-session/)
-[![GitHub license](https://img.shields.io/github/license/byjg/jwt-session.svg)](https://opensource.byjg.com/opensource/licensing.html)
-[![GitHub release](https://img.shields.io/github/release/byjg/jwt-session.svg)](https://github.com/byjg/jwt-session/releases/)
+[![Build Status](https://github.com/byjg/php-jwt-session/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/php-jwt-session/actions/workflows/phpunit.yml)
+[![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](https://opensource.byjg.com)
+[![Install MCP Server](https://img.shields.io/badge/Install-MCP_Server-8A2BE2?logo=modelcontextprotocol&logoColor=white)](https://opensource.byjg.com/docs/ai/mcpserver-byjg-docs/)
+[![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/php-jwt-session/)
+[![GitHub license](https://img.shields.io/github/license/byjg/php-jwt-session.svg)](https://opensource.byjg.com/license/)
+[![GitHub release](https://img.shields.io/github/release/byjg/php-jwt-session.svg)](https://github.com/byjg/php-jwt-session/releases/)
 
 ## Documentation
 
@@ -23,14 +24,14 @@ A PHP session replacement that stores session data in JWT tokens instead of the 
 - [Security](docs/security.md) - Security considerations and best practices
 - [API Reference](docs/api-reference.md) - Complete API documentation for all classes and methods
 
-# How to use:
+## How to use
 
 Before the session_start() use the command: 
 
 ```php
 <?php
 $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
-    ->withSecret('your super base64url encoded secret key');
+    ->withSecret('your base64 encoded 64-byte secret key');
 
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
 session_set_save_handler($handler, true);
@@ -38,36 +39,36 @@ session_set_save_handler($handler, true);
 
 Now, all your `$_SESSION` variable will be saved directly to a JWT Token!!
 
-**Note:** Make sure that you are providing a base64url encoded key.
+**Note:** The secret must be **base64 encoded** (standard alphabet) and decode to **at least 64 bytes**:
+the token is signed with HS512, and a shorter key fails with `Provided key is too short` when the
+session is written. Create one with:
+
+```bash
+php -r 'echo base64_encode(random_bytes(64)), PHP_EOL;'
+```
 
 For more details on motivation, security considerations, and best practices, see the [Documentation](#documentation) section above.
  
-# Install
+## Configuration Examples
 
-```
-composer require "byjg/jwt-session"
-```
-
-# Configuration Examples
-
-## Setting the validity of JWT Token
+### Setting the validity of JWT Token
 
 ```php
 <?php
 $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
-    ->withSecret('your super base64url encoded secret key')
+    ->withSecret('your base64 encoded 64-byte secret key')
     ->withTimeoutMinutes(60);   // You can use withTimeoutHours(1)
 
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
 session_set_save_handler($handler, true);
 ```
 
-## Setting different Session Contexts
+### Setting different Session Contexts
 
 ```php
 <?php
 $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
-    ->withSecret('your super base64url encoded secret key')
+    ->withSecret('your base64 encoded 64-byte secret key')
     ->withSessionContext('MYCONTEXT');
 
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
@@ -76,7 +77,7 @@ session_set_save_handler($handler, true);
 
 For complete configuration options including cookie domains and automatic session handler replacement, see [Configuration](docs/configuration.md).
 
-## Using RSA Private/Public Keys
+### Using RSA Private/Public Keys
 
 ```php
 <?php
@@ -131,13 +132,17 @@ $handler = new \ByJG\Session\JwtSession($sessionConfig);
 
 For more details about RSA keys and how to generate them, see [RSA Keys](docs/rsa-keys.md) and https://github.com/byjg/jwt-wrapper
 
+## Installation
 
-## Dependencies
+```bash
+composer require "byjg/jwt-session"
+```
 
-```mermaid  
-flowchart TD  
-    byjg/jwt-session --> byjg/jwt-wrapper  
+## Running Tests
+
+```bash
+vendor/bin/phpunit
 ```
 
 ----  
-[Open source ByJG](http://opensource.byjg.com)
+[Open source ByJG](https://opensource.byjg.com)

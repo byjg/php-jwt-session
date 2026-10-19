@@ -225,6 +225,37 @@ class JwtSession implements SessionHandlerInterface
         return true;
     }
 
+    /**
+     * Create a new session id
+     *
+     * The data lives in the JWT cookie and is not keyed by the session id, so
+     * any unique id does; PHP's own generator is used. Required from PHP 9.0,
+     * and PHP 8.6 warns when it is missing.
+     *
+     * @link https://php.net/manual/en/sessionidinterface.create-sid.php
+     * @throws Exception
+     */
+    public function create_sid(): string
+    {
+        $sid = session_create_id();
+
+        return $sid === false ? bin2hex(random_bytes(16)) : $sid;
+    }
+
+    /**
+     * Tell whether a session id holds data
+     *
+     * Required from PHP 9.0, and PHP 8.6 warns when it is missing. It keeps
+     * the behaviour PHP applies to a handler without the method: the session
+     * exists when reading it returns data.
+     *
+     * @link https://php.net/manual/en/sessionupdatetimestamphandlerinterface.validateid.php
+     */
+    public function validateId(string $id): bool
+    {
+        return $this->read($id) !== '';
+    }
+
     public function serializeSessionData($array): string
     {
         $result = '';

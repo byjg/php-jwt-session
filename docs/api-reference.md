@@ -75,7 +75,28 @@ Garbage collection (no-op in JWT implementation as tokens are self-expiring).
 **Parameters:**
 - `$max_lifetime` (int): Maximum session lifetime
 
-**Returns:** true
+**Returns:** 1
+
+##### `create_sid(): string`
+
+Generate a new session id, using PHP's own generator (`session_create_id()`).
+The session data lives in the JWT cookie and is not keyed by the id, so any
+unique value does.
+
+**Returns:** The new session id
+
+##### `validateId(string $id): bool`
+
+Tell whether a session id holds data. Reads the JWT cookie, so it returns
+false when the cookie is missing, expired or invalid.
+
+**Parameters:**
+- `$id` (string): Session ID (not used in JWT implementation)
+
+**Returns:** true when the session has data
+
+Both methods will be required by `SessionHandlerInterface` in PHP 9.0; PHP 8.6
+already warns when they are missing.
 
 #### Public Helper Methods
 
@@ -122,7 +143,7 @@ public function __construct(string $serverName)
 Set the secret key for JWT encoding/decoding.
 
 **Parameters:**
-- `$secret` (string): Base64url encoded secret key
+- `$secret` (string): Base64 encoded secret key that decodes to at least 64 bytes (HS512). See [Configuration](configuration.md#withsecretstring-secret).
 
 **Returns:** Self for method chaining
 
@@ -237,10 +258,11 @@ Exception class for JWT session errors.
 <?php
 use ByJG\Session\SessionConfig;
 use ByJG\Session\JwtSession;
+use ByJG\Session\JwtSessionException;
 
 try {
     $config = (new SessionConfig('example.com'))
-        ->withSecret('your-base64url-encoded-secret')
+        ->withSecret('your-base64-encoded-64-byte-secret')
         ->withTimeoutMinutes(30)
         ->withCookie('.example.com', '/');
 
@@ -262,7 +284,7 @@ try {
 ```php
 <?php
 $config = (new SessionConfig('example.com'))
-    ->withSecret('your-base64url-encoded-secret')
+    ->withSecret('your-base64-encoded-64-byte-secret')
     ->replaceSessionHandler(true); // Automatically starts session
 
 $handler = new JwtSession($config);

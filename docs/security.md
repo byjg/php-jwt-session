@@ -26,7 +26,7 @@ Always use HTTPS in production to prevent token interception during transmission
 
 - **Never commit** secret keys to version control
 - Use **environment variables** to store secret keys
-- Ensure secret keys are **base64url encoded**
+- Ensure secret keys are **base64 encoded** and decode to **at least 64 bytes** (HS512); generate them with `random_bytes(64)`
 - Rotate secret keys periodically
 
 ### 3. Token Timeout
