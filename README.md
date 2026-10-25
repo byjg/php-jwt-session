@@ -1,5 +1,6 @@
 ---
 sidebar_key: jwt-session
+sidebar_category: http-apis
 tags: [php, cryptography, authentication]
 ---
 
