@@ -5,7 +5,7 @@ tags: [php, cryptography, authentication]
 
 # JWT Session Handler
 
-A PHP session replacement that stores session data in JWT tokens instead of the filesystem. This implementation follows the SessionHandlerInterface standard, enabling stateless sessions without the need for dedicated session servers like Redis or Memcached. Perfect for distributed applications and microservices architectures.
+Keep using `$_SESSION`, but store the session in a signed JWT cookie instead of on the server: no Redis, no sticky sessions.
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-%23ea4aaa?logo=githubsponsors&logoColor=white&labelColor=0d1117)](https://github.com/sponsors/byjg)
 [![Build Status](https://github.com/byjg/php-jwt-session/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/php-jwt-session/actions/workflows/phpunit.yml)
@@ -14,6 +14,26 @@ A PHP session replacement that stores session data in JWT tokens instead of the 
 [![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/php-jwt-session/)
 [![GitHub license](https://img.shields.io/github/license/byjg/php-jwt-session.svg)](https://opensource.byjg.com/license/)
 [![GitHub release](https://img.shields.io/github/release/byjg/php-jwt-session.svg)](https://github.com/byjg/php-jwt-session/releases/)
+
+## Why
+
+PHP sessions live on the server that created them. Behind a load balancer, that means
+sticky sessions or a shared store such as Redis or Memcached, one more service to run for
+data the user already carries in a cookie.
+
+JWT Session is a `SessionHandlerInterface`, so nothing else in the application changes:
+
+```php
+$handler = new JwtSession((new SessionConfig('your.domain.com'))->withSecret($secret));
+session_set_save_handler($handler, true);
+
+session_start();
+$_SESSION['user'] = 'john';   // stored in a signed token, not on the server
+```
+
+Any server that has the key can read the session, so the application scales without a
+session store. Sign with a shared secret, or with an RSA key pair so other services can
+verify the session without being able to forge it.
 
 ## Documentation
 
