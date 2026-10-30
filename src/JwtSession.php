@@ -85,16 +85,22 @@ class JwtSession implements SessionHandlerInterface
     public function destroy(string $id): bool
     {
         if (!headers_sent()) {
-            setcookie(
-                self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext(),
-                "",
-                (time()-3000),
-                $this->sessionConfig->getCookiePath(),
-                $this->sessionConfig->getCookieDomain() ?? "",
-            );
+            $this->sendCookie("", time()-3000);
         }
 
         return true;
+    }
+
+    protected function sendCookie(string $value, int $expires): void
+    {
+        setcookie(self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext(), $value, [
+            'expires' => $expires,
+            'path' => $this->sessionConfig->getCookiePath(),
+            'domain' => $this->sessionConfig->getCookieDomain() ?? "",
+            'secure' => $this->sessionConfig->isCookieSecure(),
+            'httponly' => true,
+            'samesite' => $this->sessionConfig->getCookieSameSite(),
+        ]);
     }
 
     /**
@@ -208,15 +214,7 @@ class JwtSession implements SessionHandlerInterface
         $token = $jwt->generateToken($session_data);
 
         if (!headers_sent()) {
-            setcookie(
-                self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext(),
-                $token,
-                (time()+$this->sessionConfig->getTimeoutMinutes()*60) ,
-                $this->sessionConfig->getCookiePath(),
-                $this->sessionConfig->getCookieDomain() ?? "",
-                false,
-                true
-            );
+            $this->sendCookie($token, time()+$this->sessionConfig->getTimeoutMinutes()*60);
             if (defined("SETCOOKIE_FORTEST")) {
                 $_COOKIE[self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext()] = $token;
             }

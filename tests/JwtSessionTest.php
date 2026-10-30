@@ -8,6 +8,7 @@ use ByJG\Session\JwtSessionException;
 use ByJG\Session\SessionConfig;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RequiresFunction;
 
 ob_start();
 define("SETCOOKIE_FORTEST", "TESTCASE");
@@ -48,6 +49,59 @@ class JwtSessionTest extends TestCase
     public function testDestroy()
     {
         $this->assertTrue($this->object->destroy(self::SESSION_ID));
+    }
+
+    /**
+     * The Set-Cookie header PHP emitted last; CLI only exposes it through Xdebug.
+     */
+    protected function lastSetCookie(): string
+    {
+        $headers = array_filter(xdebug_get_headers(), fn($header) => str_starts_with($header, 'Set-Cookie:'));
+        $this->assertNotEmpty($headers, 'No Set-Cookie header was emitted');
+
+        return end($headers);
+    }
+
+    #[RequiresFunction('xdebug_get_headers')]
+    public function testWriteCookieIsSecureByDefault()
+    {
+        $this->object->write(self::SESSION_ID, 'data');
+
+        $cookie = $this->lastSetCookie();
+        $this->assertStringContainsString('; secure', $cookie);
+        $this->assertStringContainsString('; HttpOnly', $cookie);
+        $this->assertStringContainsString('; SameSite=Lax', $cookie);
+    }
+
+    #[RequiresFunction('xdebug_get_headers')]
+    public function testDestroyCookieIsSecureByDefault()
+    {
+        $this->object->destroy(self::SESSION_ID);
+
+        $cookie = $this->lastSetCookie();
+        $this->assertStringContainsString('; secure', $cookie);
+        $this->assertStringContainsString('; HttpOnly', $cookie);
+        $this->assertStringContainsString('; SameSite=Lax', $cookie);
+    }
+
+    #[RequiresFunction('xdebug_get_headers')]
+    public function testWriteCookieHonoursConfiguration()
+    {
+        $this->sessionConfig->withSecureCookie(false)->withSameSite('Strict');
+
+        $this->object->write(self::SESSION_ID, 'data');
+
+        $cookie = $this->lastSetCookie();
+        $this->assertStringNotContainsString('; secure', $cookie);
+        $this->assertStringContainsString('; HttpOnly', $cookie);
+        $this->assertStringContainsString('; SameSite=Strict', $cookie);
+    }
+
+    public function testInvalidSameSite()
+    {
+        $this->expectException(JwtSessionException::class);
+
+        $this->sessionConfig->withSameSite('lax');
     }
 
     public function testGc()

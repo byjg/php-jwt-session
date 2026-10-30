@@ -5,7 +5,10 @@
 
 ## Breaking Changes
 
-- None.
+- The session cookie is now sent with `Secure` and `SameSite=Lax`. It used to be
+  hardcoded to non-`Secure`, with no `SameSite`, and neither could be configured.
+  Sites served over plain HTTP lose their session unless they call
+  `withSecureCookie(false)`. Use `withSameSite()` to change the `SameSite` value.
 
 ## Requirements
 
