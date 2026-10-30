@@ -65,6 +65,27 @@ $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
 ```
 
+## Cookie Security
+
+The session cookie is sent with `Secure`, `HttpOnly` and `SameSite=Lax` by default.
+
+Browsers do not return a `Secure` cookie over plain HTTP, so sessions stop working on a
+site that is not served over HTTPS. Turn it off only for local development:
+
+```php
+<?php
+$sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
+    ->withSecret('your base64 encoded 64-byte secret key')
+    ->withSecureCookie(false)
+    ->replaceSessionHandler();
+```
+
+Use `withSameSite()` to change the `SameSite` attribute:
+
+```php
+->withSameSite('Strict')
+```
+
 ## Configuration Methods Reference
 
 ### `withSecret(string $secret)`
@@ -92,6 +113,12 @@ Set a custom session context name. Default is 'default'. This allows multiple in
 
 ### `withCookie(string $domain, string $path = '/')`
 Configure the cookie domain and path. The domain should include the leading dot for subdomain support (e.g., '.example.com').
+
+### `withSecureCookie(bool $secure = true)`
+Set the `Secure` attribute of the cookie. Default is `true`.
+
+### `withSameSite(string $sameSite)`
+Set the `SameSite` attribute of the cookie: `Strict`, `Lax` or `None`. Default is `Lax`. Throws `JwtSessionException` for any other value. Browsers reject `None` without `Secure`.
 
 ### `replaceSessionHandler(bool $startSession = true)`
 Automatically replace PHP's session handler and optionally start the session immediately.

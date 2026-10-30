@@ -13,7 +13,7 @@ The JWT Token cannot be changed, but **it can be read**.
 This implementation saves the JWT into a client cookie. Because of this, **do not store sensible data like passwords in the session**.
 
 :::danger
-Never store sensitive information such as passwords, API keys, or personal identifiable information (PII) in the JWT session. The token is encoded but not encrypted when using shared secrets.
+Never store sensitive information such as passwords, API keys, or personal identifiable information (PII) in the JWT session. The token is signed and encoded, but not encrypted, with both shared secrets and RSA keys.
 :::
 
 ## Best Practices
@@ -49,6 +49,8 @@ Set appropriate timeout values based on your application's security requirements
 When configuring cookies:
 - Use specific domain paths to limit cookie scope
 - Consider the domain scope carefully (`.example.com` vs `example.com`)
+- Keep the `Secure` attribute on outside local development; the JWT signature prevents forgery, not the replay of a captured cookie
+- Use `withSameSite('Strict')` if the session is not needed when arriving from other sites
 
 ### 5. Consider RSA Keys for Enhanced Security
 
@@ -59,7 +61,7 @@ For applications requiring higher security, use RSA private/public keys instead 
 ```
 
 This provides:
-- Asymmetric encryption
+- Asymmetric signing
 - Better key distribution security
 - Enhanced protection against key compromise
 
@@ -75,7 +77,7 @@ This provides:
 - **Token Theft**: If an attacker obtains the cookie, they can use it
 - **XSS Attacks**: Store only non-sensitive data in sessions
 - **Man-in-the-Middle**: Always use HTTPS
-- **Token Content Privacy**: Token payload is readable (use RSA for better protection)
+- **Token Content Privacy**: Token payload is readable, with shared secrets and RSA keys alike
 
 ## Exception Handling
 

@@ -55,9 +55,10 @@ Parse PHP session serialized data back into an array. This method handles the cu
 
 Cookies are set with the following parameters:
 - **Name**: `AUTH_BEARER_{context}`
-- **Value**: JWT token containing encrypted session data
+- **Value**: Signed JWT token containing the session data (readable, not encrypted)
 - **Expiration**: Current time + configured timeout in minutes
 - **Path**: Configured cookie path (default: '/')
 - **Domain**: Configured cookie domain
-- **Secure**: false (can be enhanced in custom implementations)
+- **Secure**: true (see `withSecureCookie()`)
 - **HttpOnly**: true (prevents JavaScript access)
+- **SameSite**: Lax (see `withSameSite()`)
