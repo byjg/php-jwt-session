@@ -5,7 +5,16 @@
 
 ## Breaking Changes
 
-- None.
+- The session cookie is now sent with `Secure` and `SameSite=Lax`. It used to be
+  hardcoded to non-`Secure`, with no `SameSite`, and neither could be configured.
+  Sites served over plain HTTP lose their session unless they call
+  `withSecureCookie(false)`. Use `withSameSite()` to change the `SameSite` value.
+- The JWT now carries the session context it was issued for, and `read()` rejects a
+  token whose context does not match. Before, the context only changed the cookie name,
+  so a token from one context (e.g. `default`) could be copied into the cookie of
+  another (e.g. `admin`) and was accepted when both shared the secret and server name.
+  Tokens issued by earlier versions have no context and are rejected, so existing
+  sessions end once on upgrade.
 
 ## Requirements
 

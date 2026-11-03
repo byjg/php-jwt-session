@@ -34,6 +34,10 @@ $handler = new \ByJG\Session\JwtSession($sessionConfig);
 session_set_save_handler($handler, true);
 ```
 
+Each context uses its own cookie, and the token records the context it was issued for.
+A token issued for one context is rejected by any other context, even when both share
+the same secret and server name.
+
 ## Replace Session Handler Automatically
 
 You can automatically replace the session handler and start the session:
@@ -65,6 +69,27 @@ $sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
 $handler = new \ByJG\Session\JwtSession($sessionConfig);
 ```
 
+## Cookie Security
+
+The session cookie is sent with `Secure`, `HttpOnly` and `SameSite=Lax` by default.
+
+Browsers do not return a `Secure` cookie over plain HTTP, so sessions stop working on a
+site that is not served over HTTPS. Turn it off only for local development:
+
+```php
+<?php
+$sessionConfig = (new \ByJG\Session\SessionConfig('your.domain.com'))
+    ->withSecret('your base64 encoded 64-byte secret key')
+    ->withSecureCookie(false)
+    ->replaceSessionHandler();
+```
+
+Use `withSameSite()` to change the `SameSite` attribute:
+
+```php
+->withSameSite('Strict')
+```
+
 ## Configuration Methods Reference
 
 ### `withSecret(string $secret)`
@@ -88,10 +113,16 @@ Set the JWT token validity in minutes. Default is 20 minutes.
 Set the JWT token validity in hours. Convenience method that converts hours to minutes internally.
 
 ### `withSessionContext(string $context)`
-Set a custom session context name. Default is 'default'. This allows multiple independent sessions.
+Set a custom session context name. Default is 'default'. This allows multiple independent sessions. A token issued for one context is not accepted by another.
 
 ### `withCookie(string $domain, string $path = '/')`
 Configure the cookie domain and path. The domain should include the leading dot for subdomain support (e.g., '.example.com').
+
+### `withSecureCookie(bool $secure = true)`
+Set the `Secure` attribute of the cookie. Default is `true`.
+
+### `withSameSite(string $sameSite)`
+Set the `SameSite` attribute of the cookie: `Strict`, `Lax` or `None`. Default is `Lax`. Throws `JwtSessionException` for any other value. Browsers reject `None` without `Secure`.
 
 ### `replaceSessionHandler(bool $startSession = true)`
 Automatically replace PHP's session handler and optionally start the session immediately.

@@ -68,4 +68,4 @@ https://github.com/byjg/jwt-wrapper
 
 - **Enhanced Security**: Private key never needs to be shared with clients
 - **Better Key Management**: Public key can be distributed safely for verification
-- **Stronger Cryptography**: RSA provides asymmetric encryption capabilities
+- **Asymmetric Signing**: Tokens are signed with the private key and verified with the public key; the payload is still readable, not encrypted

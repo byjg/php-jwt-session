@@ -194,6 +194,26 @@ Configure cookie domain and path.
 
 **Returns:** Self for method chaining
 
+##### `withSecureCookie(bool $secure = true): static`
+
+Set the `Secure` attribute of the cookie. Enabled by default.
+
+**Parameters:**
+- `$secure` (bool): Send the cookie over HTTPS only (default: true)
+
+**Returns:** Self for method chaining
+
+##### `withSameSite(string $sameSite): static`
+
+Set the `SameSite` attribute of the cookie. `Lax` by default.
+
+**Parameters:**
+- `$sameSite` (string): `Strict`, `Lax` or `None`
+
+**Returns:** Self for method chaining
+
+**Throws:** `JwtSessionException` for any other value
+
 ##### `replaceSessionHandler(bool $startSession = true): static`
 
 Configure automatic session handler replacement.

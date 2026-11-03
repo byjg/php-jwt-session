@@ -7,6 +7,7 @@ require_once __DIR__ . "/../vendor/autoload.php";
 
 $sessionConfig = (new SessionConfig('api.com.br'))
     ->withSecret('c2VjcmV0S2V5X3RoaXNfaXNfYV92ZXJ5X2xvbmdfc2VjcmV0X2tleV90aGF0X2lzXzY0X2J5dGVzX2xvbmchIQ==')
+    ->withSecureCookie(false)
     ->replaceSessionHandler();
 $handler = new JwtSession($sessionConfig);
 

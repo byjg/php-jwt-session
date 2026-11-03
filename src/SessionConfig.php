@@ -14,6 +14,8 @@ class SessionConfig
     protected int $timeoutMinutes = 20;
     protected ?string $cookieDomain = null;
     protected string $cookiePath = '/';
+    protected bool $cookieSecure = true;
+    protected string $cookieSameSite = 'Lax';
     protected ?JwtKeyInterface $jwtKey = null;
     protected ?bool $replaceSessionHandler = null;
 
@@ -48,6 +50,26 @@ class SessionConfig
     {
         $this->cookieDomain = $domain;
         $this->cookiePath = $path;
+        return $this;
+    }
+
+    public function withSecureCookie(bool $secure = true): static
+    {
+        $this->cookieSecure = $secure;
+        return $this;
+    }
+
+    /**
+     * @param string $sameSite One of Strict, Lax or None
+     * @throws JwtSessionException
+     */
+    public function withSameSite(string $sameSite): static
+    {
+        if (!in_array($sameSite, ['Strict', 'Lax', 'None'], true)) {
+            throw new JwtSessionException("Invalid SameSite value: $sameSite");
+        }
+
+        $this->cookieSameSite = $sameSite;
         return $this;
     }
 
@@ -107,6 +129,22 @@ class SessionConfig
     public function getCookiePath(): string
     {
         return $this->cookiePath;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCookieSecure(): bool
+    {
+        return $this->cookieSecure;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCookieSameSite(): string
+    {
+        return $this->cookieSameSite;
     }
 
     /**
