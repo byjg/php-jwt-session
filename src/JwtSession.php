@@ -168,7 +168,9 @@ class JwtSession implements SessionHandlerInterface
                 );
                 $data = $jwt->extractData($_COOKIE[self::COOKIE_PREFIX . $this->sessionConfig->getSessionContext()]);
 
-                if (empty($data->data)) {
+                // The token must have been issued for this context, otherwise a token from
+                // one context could be replayed in the cookie of another.
+                if (($data->ctx ?? null) !== $this->sessionConfig->getSessionContext() || empty($data->data)) {
                     return '';
                 }
 
@@ -210,7 +212,7 @@ class JwtSession implements SessionHandlerInterface
             $this->sessionConfig->getServerName(),
             $key
         );
-        $session_data = $jwt->createJwtData(['data' => $data], $this->sessionConfig->getTimeoutMinutes() * 60, 0, null);
+        $session_data = $jwt->createJwtData(['data' => $data, 'ctx' => $this->sessionConfig->getSessionContext()], $this->sessionConfig->getTimeoutMinutes() * 60, 0, null);
         $token = $jwt->generateToken($session_data);
 
         if (!headers_sent()) {

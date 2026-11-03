@@ -222,4 +222,26 @@ class JwtSessionTest extends TestCase
         $this->assertEquals($serialize, $result);
     }
 
+    public function testTokenFromAnotherContextIsRejected()
+    {
+        $this->object->write("SESSID", 'user|s:5:"alice";');
+        $token = $_COOKIE[JwtSession::COOKIE_PREFIX . 'default'];
+
+        // Same secret and server name, different context: replay the default token there.
+        $adminConfig = (clone $this->sessionConfig)->withSessionContext('admin');
+        $admin = new JwtSession($adminConfig);
+        $_COOKIE[JwtSession::COOKIE_PREFIX . 'admin'] = $token;
+
+        $this->assertSame('', $admin->read("SESSID"));
+    }
+
+    public function testTokenIsReadInItsOwnContext()
+    {
+        $adminConfig = (clone $this->sessionConfig)->withSessionContext('admin');
+        $admin = new JwtSession($adminConfig);
+        $admin->write("SESSID", 'user|s:5:"alice";');
+
+        $this->assertSame('user|s:5:"alice";', $admin->read("SESSID"));
+    }
+
 }

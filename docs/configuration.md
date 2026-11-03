@@ -34,6 +34,10 @@ $handler = new \ByJG\Session\JwtSession($sessionConfig);
 session_set_save_handler($handler, true);
 ```
 
+Each context uses its own cookie, and the token records the context it was issued for.
+A token issued for one context is rejected by any other context, even when both share
+the same secret and server name.
+
 ## Replace Session Handler Automatically
 
 You can automatically replace the session handler and start the session:
@@ -109,7 +113,7 @@ Set the JWT token validity in minutes. Default is 20 minutes.
 Set the JWT token validity in hours. Convenience method that converts hours to minutes internally.
 
 ### `withSessionContext(string $context)`
-Set a custom session context name. Default is 'default'. This allows multiple independent sessions.
+Set a custom session context name. Default is 'default'. This allows multiple independent sessions. A token issued for one context is not accepted by another.
 
 ### `withCookie(string $domain, string $path = '/')`
 Configure the cookie domain and path. The domain should include the leading dot for subdomain support (e.g., '.example.com').
